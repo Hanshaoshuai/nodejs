@@ -4,7 +4,7 @@
 
 var express = require("express");
 var bodyParser = require("body-parser");
-var fs = require("fs");
+//var fs = require("fs");
 var multer  = require('multer');
 var app = express();
 
@@ -39,9 +39,6 @@ app.post("/qq",function(req,res,next){
   console.log("post请求参数：");
 	res.send(result);
 });
-
-
-
 
 
 

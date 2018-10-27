@@ -20,7 +20,7 @@
     "gettimesjs": "^1.0.0",
     "multer": "^1.0.5",
 		"webpack": "^3.6.0",
-		"mongodb": "^3.0.0",
+		"mongodb": "3.0.0",
 		"mongoose": "^5.3.4"
   }
 }
