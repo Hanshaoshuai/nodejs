@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <meta charset="UTF-8">
+	    <title>登录</title>
+		<!-- <script src="routes/index.js" type="text/javascript" charset="utf-8"></script> -->
+	    <script type="text/javascript" src="jquery.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/record.css"/>
+		<link rel="stylesheet" type="text/css" href="css/登录.css" />
+		<script>
+			!function(e){function t(n){if(i[n])return i[n].exports;var r=i[n]={exports:{},id:n,loaded:!1};return e[n].call(r.exports,r,r.exports,t),r.loaded=!0,r.exports}var i={};return t.m=e,t.c=i,t.p="",t(0)}([function(e,t){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=window;t["default"]=i.vl=function(e,t){var n=e||100,r=t||750,a=i.document,d=navigator.userAgent,o=d.match(/Android[\S\s]+AppleWebkit\/(\d{3})/i),l=d.match(/U3\/((\d+|\.){5,})/i),s=l&&parseInt(l[1].split(".").join(""),10)>=80,u=a.documentElement,c=1;if(o&&o[1]>534||s){u.style.fontSize=n+"px";var p=a.createElement("div");p.setAttribute("style","width: 1rem;display:none"),u.appendChild(p);var m=i.getComputedStyle(p).width;if(u.removeChild(p),m!==u.style.fontSize){var v=parseInt(m,10);c=100/v}}var f=a.querySelector('meta[name="viewport"]');f||(f=a.createElement("meta"),f.setAttribute("name","viewport"),a.head.appendChild(f)),f.setAttribute("content","width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1");var h=function(){u.style.fontSize=n/r*u.clientWidth*c+"px"};h(),i.addEventListener("resize",h)},e.exports=t["default"]}]);
+			// 设置基础字体大小及字体缩放比例
+			vl(100, 750);
+		</script>
+	</head>
+	<body>
+	    <div class="denglu" v-show="showFlag">
+			<div class="searchBox">
+				<div class="home-search">
+					<span>登录</span>
+					<div class="fanhui-right">
+						<!--<div @click.stop="quanXuan()">
+							<font  @click.stop="zhuche()">注册</font>
+						</div>-->
+					</div>
+				</div>
+			</div>
+			<div class="contents">
+				<div class="logo">
+					<ul>
+						<li></li>
+					</ul>
+				</div>
+				<div class="denglu-text">
+					<ul>
+						<li>
+							<span></span>
+							<input placeholder="请输入手机号" type="number" class="ferst mint-field-core"/>
+							<font v-show="shoujis" @click.stop="quxiao()"></font>
+						</li>
+						<li>
+							<span></span>
+							<input placeholder="请输入密码" type="password" class="last mint-field-core"/>
+							<font v-show="mimas" @click.stop="mima()"></font>
+						</li>
+					</ul>
+					
+					
+				</div>
+				<div class="denglu-food" @click.stop="denglus()">
+					<span>登&nbsp;&nbsp;录</span>
+				</div>
+				<div class="denglu-to">
+					<ul>
+						<li class="denglu-wangji">忘记密码</li>&nbsp;&nbsp;|&nbsp;&nbsp;
+						<li class="denglu-zhuce">立即注册</li>
+					</ul>
+				</div>
+				<div class="denglu-list denglu-bottom">
+					合作热线：18310998379
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="jquery.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var lists = {},
+			image = {};
+		$('.denglu-zhuce').on('click',function(){
+			window.location.href = '注册.html';
+		})
+		//登录
+		$('.denglu-food').on('click',function(){
+// 			if(window.localStorage.getItem('name') && (window.localStorage.getItem('name') !== '')){
+// 				alert('你已是登录状态请先退出登录');
+// 				return;
+// 			}
+			lists.name = $('.ferst')[0].value;
+			lists.password = $('.last')[0].value;
+			console.log(lists)
+			if(lists.name === ''){
+				alert('请输入用户名或手机号')
+				return;
+			}
+			if(lists.password === ''){
+				alert('请输入用户密码')
+				return;
+			}
+			$.ajax({
+				type:'post',
+				url:'http://127.0.0.1:8080/post',
+				data:lists,
+				success:function(data){
+					console.log(data);
+					if(data.code === 1001){
+						//"用户名或密码错误"
+						alert(data.msg);
+					}else if(data.code === 200){
+						$('#zhuce').css({'display':'none'});
+						window.localStorage.setItem('myName',data.nickName);
+						window.localStorage.setItem('name',lists.name);
+						window.localStorage.setItem('imgId',data.imgId);
+						window.location.href = '聊天列表.html';
+						alert(data.msg);
+					}else if(data.code === 2001){
+						//用户不存在请先注册
+						alert(data.msg);
+						window.location.href = '注册.html';
+					}
+				},
+				error:function(){
+					console.log('error');
+				}
+			})
+		});
+	</script>
+</html>

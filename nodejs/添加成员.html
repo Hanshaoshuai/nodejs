@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <meta charset="UTF-8">
+	    <title>交流列表</title>
+		<!-- <script src="routes/index.js" type="text/javascript" charset="utf-8"></script> -->
+	    <script type="text/javascript" src="jquery.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="css/record.css"/>
+		<link rel="stylesheet" type="text/css" href="css/建群页面.css" />
+		<script>
+			!function(e){function t(n){if(i[n])return i[n].exports;var r=i[n]={exports:{},id:n,loaded:!1};return e[n].call(r.exports,r,r.exports,t),r.loaded=!0,r.exports}var i={};return t.m=e,t.c=i,t.p="",t(0)}([function(e,t){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=window;t["default"]=i.vl=function(e,t){var n=e||100,r=t||750,a=i.document,d=navigator.userAgent,o=d.match(/Android[\S\s]+AppleWebkit\/(\d{3})/i),l=d.match(/U3\/((\d+|\.){5,})/i),s=l&&parseInt(l[1].split(".").join(""),10)>=80,u=a.documentElement,c=1;if(o&&o[1]>534||s){u.style.fontSize=n+"px";var p=a.createElement("div");p.setAttribute("style","width: 1rem;display:none"),u.appendChild(p);var m=i.getComputedStyle(p).width;if(u.removeChild(p),m!==u.style.fontSize){var v=parseInt(m,10);c=100/v}}var f=a.querySelector('meta[name="viewport"]');f||(f=a.createElement("meta"),f.setAttribute("name","viewport"),a.head.appendChild(f)),f.setAttribute("content","width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1");var h=function(){u.style.fontSize=n/r*u.clientWidth*c+"px"};h(),i.addEventListener("resize",h)},e.exports=t["default"]}]);
+			// 设置基础字体大小及字体缩放比例
+			vl(100, 750);
+		</script>
+	</head>
+	<body>
+	    <div class="yijian">
+			<div class="xiangmu-header" @click.stop="yijianHind()">
+				<span class="xiangmu-left"></span>
+				<span>添加成员</span>
+				<font class="xiangmu-rigth">确定</font>
+			</div>
+			<div class="box box_friend">
+				<div class="fankiu" style='padding-top:0.9rem;'></div>
+				<div class="bottom">
+					暂无好友
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="jquery.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var listName = [],page = 1,pageSize = 20,socket = io.connect('http://127.0.0.1:8080');
+		var local_name = window.localStorage.getItem('name'),myIcon = window.localStorage.getItem('myName'),imgId = window.localStorage.getItem('imgId'),
+		local_nick = window.localStorage.getItem('nickName'),locToChatName = JSON.parse(window.localStorage.getItem('toChatName')),textName = null,textName_1 = null;
+		
+		function socketIo(){
+			//消息监听
+			socket.on('message', function(data) {
+				if(data.text){
+					console.log(data.text);
+					var dom = $('#list_test');
+					if(data.text.fromName === local_name && data.text.toName !== ''){
+						console.log('111',data.text.text);
+						getList1();
+					}else if(data.text.toName === local_name){
+						console.log('222',data.text.text);
+						setTimeout(function(){
+							getList1();
+						},200);
+					}else if(data.text.toName === '' && (data.text.fromName === local_name)){
+						console.log('333',data.text.text);
+						getList1();
+					}
+					if(data.text.toName === '' && (data.text.fromName !== local_name)){
+						toDom(data.text.fromName,data.text.text,data.text.dateTime);
+					}
+				}
+			})
+			//填充对方的对话框
+			function toDom (fromName,text,dateTime){
+				console.log('444',fromName,text,dateTime);
+				getList1();
+				var dom = $('#list_test');
+				dom.append("<li style='height:36px;text-align:center;width:100%;color:red;'>时间"+dateTime+"</li>");
+				dom.append("<li style='height:36px;'>"+fromName+"在公告："+text+"</li>");
+			}
+		}
+		function toAdd(list){
+			//添加好友；
+			$.ajax({
+				type:'post',
+				url:'http://127.0.0.1:8080/post4',
+				data:list,
+				success:function(data){
+					console.log(data);
+					if(data.code == 200 ){
+						//向对方发送添加好友验证消息
+						socket.emit('clientmessage', {
+							fromName: local_name,
+							toName: list.addNumber,
+							text: {'friend':'no','addName':list.addName}
+						})
+						$('.box_list').hide();
+						$('.box_friend').show();
+						getList1();
+						alert(data.msg);
+					}else{
+						$('.box_list').hide();
+						$('.box_friend').show();
+						getList1();
+						alert(data.msg);
+					}
+				},
+				error:function(){
+					console.log('error');
+				}
+			})
+		}
+		
+		
+		function getList1(location){
+			// 好友人员列表
+			$.ajax({
+				type:'get',
+				url:'http://127.0.0.1:8080/get3',
+				data:{'name': local_name,'buildingGroup':'no'},
+				success:function(data){
+					console.log(data);
+					if(data.code = 200){
+						if(data.body.length == 0){
+							return;
+						}else{
+							$('.box_friend .bottom').hide();
+							$('#gengduo').show();
+						}
+						var box = $('.box_friend .fankiu');
+						box.html('');
+						var dom = '';
+						console.log(box);
+						for(var i=0; i<data.body.length; i++){
+							var text = "'no'",fromName = '',toName = '',newsNumber = '',friendName = '',toNames = '', headPortrait = '',imgId = '', chatRecord = '',toFriends = '',sex = '',remarksName = '', myRegion = '';
+							friendName = "'"+data.body[i].name+"'";
+							toNames = "'"+data.body[i].nickName+"'";
+							headPortrait = "'"+data.body[i].headPortrait+"'";
+							imgId = "'"+data.body[i].imgId+"'";
+							sex = "'"+data.body[i].sex+"'";
+							if(data.body[i].name == local_name){
+								window.localStorage.setItem('mySex',data.body[i].sex);
+								if(data.body[i].myRegion){
+									window.localStorage.setItem('myRegion',data.body[i].myRegion);
+								}else{
+									window.localStorage.setItem('myRegion','');
+								}
+							}
+							for(var e=0; e<data.body[i].linkFriends.length; e++){
+								if(data.body[i].linkFriends[e].friendName == local_name && data.body[i].linkFriends[e].adopt == 'yes'){
+									text = "'yes'";
+									fromName = "'"+data.body[i].linkFriends[e].fromName+"'";
+									toName = "'"+data.body[i].linkFriends[e].toName+"'";
+									newsNumber = data.body[i].linkFriends[e].newsNumber;
+									if(data.body[i].linkFriends[e].remarksName){
+										remarksName = data.body[i].linkFriends[e].remarksName;
+									}
+									if(data.body[i].linkFriends[e].chatRecord.addName){
+										chatRecord = "来自"+data.body[i].linkFriends[e].toName+'好友请求！'
+									}else{
+										if(data.body[i].linkFriends[e].chatRecord.friends == 'yes'){
+											chatRecord = data.body[i].linkFriends[e].chatRecord.text;
+										}else{
+											if(data.body[i].linkFriends[e].chatRecord.friends == 'no'){
+												chatRecord = '对方拒绝了您的好友请求！';
+												toFriends = "'no'";
+											}else{
+												chatRecord = data.body[i].linkFriends[e].chatRecord;
+											}
+										}
+									}
+								}else{
+									if(data.body[i].linkFriends[e].friendName == local_name){
+										fromName = "'"+data.body[i].linkFriends[e].fromName+"'";
+										toName = "'"+data.body[i].linkFriends[e].toName+"'";
+										newsNumber = data.body[i].linkFriends[e].newsNumber;
+										if(data.body[i].linkFriends[e].remarksName){
+											remarksName = data.body[i].linkFriends[e].remarksName;
+										}
+//										remarksName = "'"+data.body[i].linkFriends[e].remarksName+"'";
+										if(data.body[i].linkFriends[e].toName == ''){
+											if(data.body[i].linkFriends[e].chatRecord.addName){
+												chatRecord = "对方还未添加您为好友！请耐心等待...";
+											}else{
+												if(data.body[i].linkFriends[e].adopt == ''){
+													text = "'yes'";
+													toFriends = "'no'";
+													chatRecord = '对方拒绝了您的好友请求！';
+												}else{
+													chatRecord = data.body[i].linkFriends[e].chatRecord;
+												}
+											}
+										}else{
+											if(data.body[i].linkFriends[e].chatRecord.addName){
+												chatRecord = "来自"+data.body[i].linkFriends[e].toName+'的好友请求！'
+											}else{
+												if(data.body[i].linkFriends[e].adopt == ''){
+													text = "'yes'";
+													toFriends = "'no'";
+													chatRecord = '您拒绝了对方的好友请求！';
+												}else{
+													chatRecord = data.body[i].linkFriends[e].chatRecord;
+												}
+											}
+										}
+									}
+									
+								}
+							}
+							var css_b = '',nickName = data.body[i].nickName,nickName_1 = "'no'",checked = false,disabled = null;
+							if(newsNumber*1 == 0){
+								css_b = 'fromumber';
+							}else{
+								css_b = '';
+							}
+							console.log('lllll',toNames)
+							if(remarksName !== ''){
+								nickName = remarksName;
+								nickName_1 = "'"+remarksName+"'"
+							}
+							var blocks = "block"
+							console.log(toNames)
+							if(toNames == "'"+myIcon+"'"){
+								blocks = "none"
+							}
+							console.log('ffffffffffff',locToChatName)
+							for(var t=0; t<locToChatName.length; t++){
+								if(data.body[i].name == locToChatName[t].name){
+									checked = 'checked';
+									imgId = "'no'";
+									disabled = 'disabled="disabled"';
+									textName += locToChatName[t].name*1;
+									textName_1 += locToChatName[t].name*1;
+									break;
+								}
+							}
+							
+							dom += '<div class="content-food border-bottom" style="display:'+blocks+'" onClick="toChat(this,'+imgId+','+nickName_1+','+text+','+fromName+','+toName+','+friendName+','+toNames+','+headPortrait+','+sex+','+toFriends+''+i+')">'+
+									'<label><div><div class="imgas">'+
+										'<p>'+
+											'<img class="border" src="'+data.body[i].headPortrait+'" alt="" />'+
+										'</p>'+
+										'<font class="'+css_b+'">'+newsNumber+'</font>'+
+									'</div>'+
+										'<span class="first">'+nickName+'</span>'+
+										'<input name="Fruit" type="checkbox" value="" id= "checkboxs" '+checked +' '+disabled+'"/></div></label>'+
+								'</div>'
+						}
+						box.append(dom);
+						if(location){
+							window.location.href = '聊天室.html';
+						}
+					}
+				},
+				error:function(){
+					console.log('error');
+				}
+			})
+		}
+		function toChat(obj,imgId,nickName_1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends,length){
+			if(imgId == 'no'){
+				return;
+			}
+			// console.log(obj,imgId,nickName_1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends,length);
+			//判断checkbox是否被选中
+			if($(obj).find('#checkboxs').is(":checked")){
+				// console.log($(obj).find('#checkboxs'))
+				$(obj).find('#checkboxs')[0].value = JSON.stringify({
+					'friendName': friendName,
+					'friendNickName': toNames,
+					'imgId':imgId
+				})
+			}else{
+				// objs.splice(length,1);
+				$(obj).find('#checkboxs')[0].value = '';
+			}
+		}
+		
+		
+		$('.xiangmu-left').on('click',function(){
+			window.location.href = '聊天列表.html';
+		})
+		function tupian(){
+			$('.xiangmu-rigth').on('click',function(){
+				console.log(this.innerText);
+				var objs_name = [],objs_nickName = [],objs_img = [];
+				var obj_input = $('.content-food').find('input');
+				for(var i=0; i<obj_input.length; i++){
+					if(obj_input[i].value != ''){
+						var values = JSON.parse(obj_input[i].value);
+						objs_name.push({
+							'name': values.friendName,
+							'newsNumber': 0
+						});
+						objs_nickName.push(values.friendNickName);
+						objs_img.push(values.imgId);
+						textName += values.friendName*1;
+					}
+				}
+				if(objs_name.length == 0){
+					return;
+				}
+				console.log(objs_name.length,textName,textName_1);
+// 				objs_name.push({
+// 					'name': local_name,
+// 					'newsNumber': 0
+// 				});
+// 				objs_nickName.push(myIcon);
+// 				objs_img.push(imgId);
+				
+				var list = {
+					'nickName': objs_nickName,
+					'name': objs_name,
+					'imgId': objs_img,
+// 					'signIn': "yes",
+// 					'dateTime': "",
+					'text': myIcon+'邀请【'+objs_nickName.join('、')+'】加入群聊',
+					'buildingGroupName': local_nick,
+// 					'newsNumber': 0,
+// 					'groupOwner': myIcon
+				};
+				list = JSON.stringify(list);
+				console.log(list);
+				//添加成员
+				$.ajax({
+					type:'post',
+					url:'http://127.0.0.1:8080/buildingGroup_add',
+					data:{'data':list},
+					success:function(data){
+						console.log(data);
+						if(data.code == 200 ){
+							alert(data.msg);
+							// objs_name.splice(objs_name.length-1,1);
+							socket.emit('clientmessage', {
+								fromName: local_name,
+								toName: objs_name,
+								text_first: 'yes',
+								text: myIcon+'邀请【'+objs_nickName.join('、')+'】加入群聊',
+								nickName: local_nick,
+								textName: local_nick+textName,
+								textName_1: local_nick+textName_1
+							})
+							window.location.href = '聊天列表.html';
+// 							window.localStorage.setItem('toChatName',friendName);
+// 							window.localStorage.setItem('toNames',toNames);
+// 							window.localStorage.setItem('nickName',nickName_1);
+// 							window.localStorage.setItem('fromName',toName);
+// 							window.localStorage.setItem('headPortrait',headPortrait);
+// 							window.localStorage.setItem('sex',sex);
+						}
+					},
+					error:function(){
+						console.log('error');
+					}
+				})
+			})
+		};
+	    (function getText(){
+				tupian();
+				getList1();
+				socketIo();
+	    })();
+	</script>
+</html>

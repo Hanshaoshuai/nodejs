@@ -1,0 +1,184 @@
+.mint-toast .mint-toast-text {
+  line-height: 0.4rem;
+  font-size: 0.32rem;
+}
+.mint-indicator-wrapper {
+  z-index: 3000;
+}
+.denglu {
+  position: fixed;
+  background: #fff;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  overflow-y: auto;
+}
+.denglu .searchBox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0.9rem;
+  background-color: #ff7a59;
+  z-index: 30;
+}
+.denglu .searchBox .home-search {
+  height: 100%;
+  line-height: 0.9rem;
+  font-size: 0.4rem;
+  text-align: center;
+  color: #fff;
+}
+.denglu .searchBox .home-search .fanhui-butten {
+  position: absolute;
+  height: 100%;
+  padding-left: 0.32rem;
+  display: inline-block;
+  top: 0.08rem;
+  left: 0;
+}
+.denglu .searchBox .home-search .fanhui-butten img {
+  height: 0.4rem;
+}
+.denglu .searchBox .home-search .fanhui-right {
+  position: absolute;
+  right: 0.4rem;
+  top: 0;
+  font-size: 0.32rem;
+}
+.denglu .searchBox .home-search .fanhui-right font {
+  display: inline-block;
+  vertical-align: top;
+}
+.denglu .contents {
+  /* position: fixed; */
+  width: 100%;
+ /* top: 39.1%;
+  left: 0; */
+  /* z-index: 22; */
+  padding-top:1.5rem;
+}
+.denglu .contents .logo {
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  /* margin-top: -1.8rem; */
+  z-index: 26;
+}
+.denglu .contents .logo ul > li {
+  width: 2.98rem;
+  height: 2.64rem;
+  background-image: url("img/denglu2.png");
+  /*width:1.573rem;
+					height:1.28rem;
+					background-image:url("./img/denglu2.png");*/
+  /*width:1.507rem;
+					height:1.521rem;
+					background-image:url("./img/denglu3.png");*/
+  background-size: 100% 100%;
+}
+.denglu .contents .denglu-text {
+  width: 90.8%;
+  margin: 0 auto;
+  position: relative;
+  margin-top: 0.6rem;
+  border: 1px solid #d0d0d0;
+}
+.denglu .contents .denglu-text ul {
+  width: 100%;
+}
+.denglu .contents .denglu-text ul li {
+  width: 100%;
+  padding: 0.14rem 0;
+  display: flex;
+}
+.denglu .contents .denglu-text ul li input {
+  height: 0.52rem;
+  flex: 1;
+  padding-left: 0.2rem;
+  border-left: 1px solid #d0d0d0;
+  border:none;
+  outline:none;
+  cursor: pointer;
+  caret-color: #ff7a59;
+  font-size:0.28rem;
+}
+.denglu .contents .denglu-text ul li input::-webkit-input-placeholder {
+  color: #d0d0d0;
+}
+.denglu .contents .denglu-text ul li:first-child {
+  border-bottom: 1px solid #d0d0d0;
+}
+.denglu .contents .denglu-text ul li span {
+  display: inline-block;
+  width: 0.28rem;
+  height: 0.32rem;
+  margin: 0.1rem 0.32rem 0 0.26rem;
+  background-image: url("img/gerens.png");
+  background-size: 100% 100%;
+}
+.denglu .contents .denglu-text ul li font {
+  display: inline-block;
+  width: 0.34rem;
+  height: 0.34rem;
+  margin: 0.08rem 0.32rem 0 0;
+  background-image: url("img/quxiao.png");
+  background-size: 100% 100%;
+}
+.denglu .contents .denglu-text ul li:last-child span {
+  background-image: url("img/mimas.png");
+}
+.denglu .contents .denglu-food {
+  width: 90.80%;
+  height: 0.8rem;
+  margin: 0 auto;
+  margin-top: 0.6rem;
+  font-size:0;
+}
+.denglu .contents .denglu-food span {
+  width: 100%;
+  height: 100%;
+  color: #ffffff;
+  font-size: 0.4rem;
+  text-align: center;
+  line-height: 0.8rem;
+  border-radius: 8px;
+  display: inline-block;
+  background: #ff7a59;
+}
+.denglu .contents .denglu-to {
+  width: 100%;
+  color: #d0d0d0;
+  font-size:0.28rem;
+  margin-top:0.4rem;
+}
+.denglu .contents .denglu-to ul {
+  padding: 0.4rem;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: flex-end;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.denglu .contents .denglu-to ul .denglu-zhuce {
+  color: #ff7a59;
+}
+.denglu .contents .denglu-list {
+  width: 100%;
+  height: 0.8rem;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.denglu .contents .denglu-bottom {
+  color: #d0d0d0;
+  /* margin-top: 2rem; */
+  bottom: 0.2rem;
+  left: 0;
+  font-size: 0.32rem;
+}

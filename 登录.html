@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <meta charset="UTF-8">
+	    <title>登录</title>
+		<style type="text/css">
+			#denglu{
+				width:100%;
+				display:flex;
+				display:-webkit-flex;
+				border:1px solid #8F8B83;
+				border-right:none;
+				border-bottom:none;
+			}
+			/* span{
+				display:block;
+			} */
+			.box_child{
+				display:inline-block;
+				flex:1;
+				display:flex;
+				flex-direction: column;
+				justify-content: center;
+				/* align-items: center; */
+			}
+			.box_child_width{
+				display:inline-block;
+				flex:1;
+				display:flex;
+/*				flex-direction: column;*/
+				justify-content: center;
+			}
+			.box_child1{
+				display:flex;
+				justify-content:center;
+			}
+			.box_child2{
+				flex:1;
+				display:flex;
+				flex-direction:column;
+				justify-content:center;
+			}
+			.box_span{
+				flex:1;
+				padding:0 10px;
+				display:flex;
+				flex-direction: column;
+				justify-content: center;
+				border-right: 1px solid #8F8B83;
+			}
+			.box_span1{
+				width:30%;
+				padding:0 10px;
+				display:flex;
+				flex-direction: column;
+				justify-content: center;
+			}
+			.box_span2{
+				width:30%;;
+				padding:0 10px;
+				display:flex;
+				flex-direction: column;
+				justify-content: center;
+			}
+			.box_span3{
+				width:20%;
+				padding:0 10px;
+				display:flex;
+				flex-direction: column;
+				justify-content: center;
+			}
+			
+			.box_span_border{
+				border-bottom:1px solid #8F8B83
+			}
+		</style>
+	</head>
+	<body>
+	    <div id="denglu">
+			
+		</div>
+		<table width="100%" border="1" style="margin-top:10px;">
+			<thead>
+				<tr>
+					<th>一级指标名称</th>
+					<th>二级指标名称</th>
+					<th>需填报的变量值</th>
+					<th>阙值(单位：%)</th>
+					<th>预设值</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td rowSpan="6">核心业务系统交易成功率</td>
+					<td rowSpan="2">核心业务系统交易成功率</td>
+					<td>系统成功交易量</td>
+					<td>最小阈值： 最大阈值：</td>
+					<td>预设值</td>
+				</tr>
+				<tr>
+					<td>系统交易总量</td>
+					<td>最小阈值： 最大阈值：</td>
+					<td>预设值</td>
+				</tr>
+				<tr>
+					<td rowSpan="2">资金变动财务类交易成功率</td>
+					<td>系统成功交易量</td>
+					<td>最小阈值： 最大阈值：</td>
+					<td>预设值</td>
+				</tr>
+				<tr>
+					<td>系统交易总量</td>
+					<td>最小阈值： 最大阈值：</td>
+					<td>预设值</td>
+				</tr>
+				<tr>
+					<td rowSpan="2">非资金变动财务类交易成功率</td>
+					<td>系统成功交易量</td>
+					<td>最小阈值： 最大阈值：</td>
+					<td>预设值</td>
+				</tr>
+				<tr>
+					<td>系统交易总量</td>
+					<td>最小阈值： 最大阈值：</td>
+					<td>预设值</td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+	<script type="text/javascript">
+		const data = [
+		  {
+			id: 14,
+			kpiCode: '2001001',
+			kpiTypeCode: '2',
+			kpiTypeName: '系统交易成功率',//1
+			level: '0',
+			parentId: '13',
+			type: 3,
+			children: [
+			  {
+				id: 81,
+				kpiCode: '2003',
+				kpiTypeCode: '2',
+				kpiTypeName: '核心业务系统交易成功率',//2
+				level: '1',
+				parentId: '14',
+				children: [
+				  {
+					id: 15,
+					kpiCode: '2001002',
+					kpiTypeName: '非资金变动财务类交易成功率',//3
+					kpiTypeCode: '2',
+					level: '2',
+					parentId: '81',
+					children: [
+					  {
+						id: 90,
+						kpiCode: '2001002',
+						kpiTypeName: '系统成功交易量',//4
+						kpiTypeCode: '2',
+						level: '3',
+						parentId: '15',
+						xxx_min: '2001002_snt_min',
+						xxx_max: '2001002_snt_min',
+						xxx_yushe: '2001002_snt_yushe'
+					  },
+					  {
+						id: 91,
+						kpiCode: '2001003',
+						kpiTypeName: '系统交易总量',//4
+						kpiTypeCode: '2',
+						level: '3',
+						parentId: '15',
+						xxx_min: 'user1',
+						xxx_max: 'age1',
+						xxx_yushe: 'xxxx_yushe3'
+					  }
+					]
+				  },
+				  {
+					id: 14,
+					kpiCode: '2001001',
+					kpiTypeName: '资金变动财务类交易成功率',//3
+					kpiTypeCode: '2',
+					level: '2',
+					parentId: '81',
+					children: [
+					  {
+						id: 90,
+						kpiCode: '2001002',
+						kpiTypeName: '系统成功交易量',//4
+						kpiTypeCode: '2',
+						level: '3',
+						parentId: '15',
+						xxx_min: '2001002_snt_min',
+						xxx_max: '2001002_snt_min',
+						xxx_yushe: '2001002_snt_yushe'
+					  },
+					  {
+						id: 91,
+						kpiCode: '2001003',
+						kpiTypeName: '系统交易总量',//4
+						kpiTypeCode: '2',
+						level: '3',
+						parentId: '15',
+						xxx_min: 'user1',
+						xxx_max: 'age1',
+						xxx_yushe: 'xxxx_yushe3'
+					  },
+					  {
+						id: 93,
+						kpiCode: '2001003',
+						kpiTypeName: '系统交易总量xxxx',//4
+						kpiTypeCode: '2',
+						level: '3',
+						parentId: '15',
+						xxx_min: 'user1',
+						xxx_max: 'age1',
+						xxx_yushe: 'xxxx_yushe3'
+					  }
+					]
+				  }
+				]
+			  }
+			]
+		  },
+		  
+		];
+
+		var box = document.getElementById('denglu');
+		
+		var length = data.length;
+		
+		for(var i=0; i<length; i++){
+			var box_div = document.createElement('div');
+			
+			var box_div_1 = document.createElement('div');
+			var box_div_2 = document.createElement('div');
+//			var box_div_3 = document.createElement('div');
+			var box_div_4 = document.createElement('div');
+			
+			box_div.style.display = 'flex';
+			box_div.style.flex = '1';
+			box_div.style.borderBottom = '1px solid #8F8B83';
+			
+			box_div_1.setAttribute("class", 'box_child_width');
+			box_div_2.setAttribute("class", 'box_child2');
+			box_div_4.setAttribute("class", 'box_child');
+			
+			box_div_4.style.borderLeft = '1px solid #8F8B83';
+			
+			
+			var box_div_1_0 = document.createElement('span');
+			box_div_1_0.setAttribute("class", 'box_span3');
+			box_div_1_0.style.borderRight = '1px solid #8F8B83';
+			box_div_1_0.innerHTML = data[i].kpiTypeName;
+			
+			
+			box_div_1.appendChild(box_div_1_0);
+			if(data[i].children){
+				for(var q=0; q<data[i].children.length; q++){
+					var box_div_3 = document.createElement('div');
+					box_div_3.setAttribute("class", 'box_child');
+					box_div_3.style.borderLeft = '1px solid #8F8B83';
+					
+					var box_div_2_0_box = document.createElement('div');
+					box_div_2_0_box.setAttribute("class", 'box_child1');
+					var box_div_2_0 = document.createElement('span');
+					box_div_2_0.setAttribute("class", 'box_span1');
+				
+					box_div_2_0.innerHTML = data[i].children[q].kpiTypeName;
+//					box_div_2.appendChild(box_div_2_0);
+					if(data[i].children.length>1 && q<data[i].children.length-1){
+						box_div_2_0.setAttribute("class", 'box_span2');
+						box_div_2_0_box.style.borderBottom = '1px solid #8F8B83';
+					}
+				
+					if(data[i].children[q].children){
+						for(var w=0; w<data[i].children[q].children.length; w++){
+							var box_div_3_0_box = document.createElement('div');
+							var box_div_4_0_box = document.createElement('div');
+							var box_div_3_0 = document.createElement('span');
+							box_div_3_0_box.style.display = 'flex';
+//							box_div_3_0_box.style.display = '-webkit-flex';
+							box_div_3_0.setAttribute("class", 'box_span');
+							box_div_4_0_box.style.flex = '1';
+						
+							box_div_3_0.innerHTML = data[i].children[q].children[w].kpiTypeName;
+							box_div_3_0_box.appendChild(box_div_3_0);
+							box_div_3.appendChild(box_div_3_0_box);
+							if(data[i].children[q].children.length>1  && w<data[i].children[q].children.length-1){
+								box_div_3_0.setAttribute("class", 'box_span box_span_border');
+							}
+						
+							if(data[i].children[q].children[w].children){
+								for(var r=0; r<data[i].children[q].children[w].children.length; r++){
+									var box_div_4_0 = document.createElement('span');
+									box_div_4_0.setAttribute("class", 'box_span');
+									
+									box_div_4_0.innerHTML = data[i].children[q].children[w].children[r].kpiTypeName;
+									box_div_4_0_box.appendChild(box_div_4_0);
+									
+									if(data[i].children[q].children[w].children.length>1){
+										box_div_4_0.setAttribute("class", 'box_span box_span_border');
+									}
+								}
+							}
+							box_div_3_0_box.appendChild(box_div_4_0_box);
+						}
+					}
+					box_div_2_0_box.appendChild(box_div_2_0);
+					box_div_2_0_box.appendChild(box_div_3);
+					box_div_2.appendChild(box_div_2_0_box);
+					console.log(box_div_2)
+					
+					box_div_1.appendChild(box_div_2);
+				}
+			}
+			
+			box_div.appendChild(box_div_1);
+			box.appendChild(box_div);
+		}
+		
+		
+		
+		
+		
+	</script>
+</html>
