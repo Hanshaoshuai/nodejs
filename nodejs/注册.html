@@ -16,7 +16,7 @@
 	<body>
 	    <div class="denglu" v-show="showFlag">
 			<div class="xiangmu-header" @click.stap="yijianHind()">
-				<span class="xiangmu-left"><img src="./img/back.png"/></span>
+				<font class="xiangmu-left"></font>
 				<span>注册</span>
 			</div>
 			<div class="contents">
@@ -38,7 +38,7 @@
 							<font @click.stop="quxiao()"></font>
 						</li>
 						<li>
-							<span></span>
+							<span class='shouJi'></span>
 							<input placeholder="请输入手机号" type="number" class="ferst mint-field-core"/>
 							<font @click.stop="quxiao()"></font>
 						</li>
@@ -121,7 +121,7 @@
 				}
 			})
 		});
-		$('.denglu-zhuce').on('click',function(){
+		$('.xiangmu-left, .denglu-zhuce').on('click',function(){
 			window.location.href = '登录.html';
 		})
 		$('#sir_madam_box input').on('click',function(){

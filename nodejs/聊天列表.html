@@ -280,7 +280,7 @@
 								}
 							}
 							var css_b = '',nickName = data.body[i].nickName,nickName1 = "'no'",imga_first = 'block',imga_last = 'none',localNumber = 0,
-							nickNameGrou = "'no'",imgList = [],groupChatNumber = null,groupOwner = "'no'";
+							nickNameGrou = "'no'",imgList = [],groupChatNumber = null,groupOwner = "'no'",textName = "'no'";
 							if(newsNumber*1 == 0){
 								css_b = 'fromumber';
 							}else{
@@ -299,6 +299,7 @@
 								localNumber = data.body[i].imgId.length;
 								nickName = data.body[i].buildingGroupName;
 								nickNameGrou = "'"+nickName+"'";
+								textName = "'"+data.body[i].textName+"'";
 								for(var q=0; q<localNumber; q++){
 									imgList.push(data.body[i].imgId[q].classIcon);
 								}
@@ -321,7 +322,7 @@
 									}
 								}
 							}
-							dom += '<div class="content-food border-bottom" onClick="toChat('+groupOwner+','+localNumber+','+nickNameGrou+','+nickName1+','+text+','+fromName+','+toName+','+friendName+','+toNames+','+headPortrait+','+sex+','+toFriends+')">'+
+							dom += '<div class="content-food border-bottom" onClick="toChat('+textName+','+groupOwner+','+localNumber+','+nickNameGrou+','+nickName1+','+text+','+fromName+','+toName+','+friendName+','+toNames+','+headPortrait+','+sex+','+toFriends+')">'+
 									'<div class="imgas">'+
 										'<p style="display:'+imga_first+'">'+
 											'<img class="border" src="'+data.body[i].headPortrait+'" alt="" />'+
@@ -356,7 +357,7 @@
 				}
 			})
 		}
-		function claerNumeber(groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends){
+		function claerNumeber(textName,groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends){
 			// 消息清零
 			window.localStorage.setItem('type','chat');
 			window.localStorage.setItem('toChatName',friendName);
@@ -381,18 +382,19 @@
 				}
 			})
 		}
-		function toChat(groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends){
+		function toChat(textName,groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends){
 //			console.log(groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends);
+			window.localStorage.setItem('textName',textName);
 			if(text == 'yes'){
 				console.log(toName)
-				claerNumeber(groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends);
+				claerNumeber(textName,groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends);
 			}else{
 				
 				if(text == 'no' && fromName != localName){
 					console.log('jkjjjj',toNames.split(',').length);
 					if(toNames.split(',').length < 2){
 						console.log('jkjjjj',toNames);
-						claerNumeber(groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends);
+						claerNumeber(textName,groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends);
 						return;
 					}
 					// console.log(friendName,toNames);
@@ -406,7 +408,6 @@
 					window.localStorage.setItem('localNumber',localNumber);
 					window.localStorage.setItem('nickName',nickNameGrou);
 					window.localStorage.setItem('type','groupChat');
-					// window.localStorage.setItem('toChatName',friendName);
 					window.localStorage.setItem('toNames',toNames);
 					window.localStorage.setItem('fromName',toName);
 					window.localStorage.setItem('headPortrait',headPortrait);

@@ -238,7 +238,7 @@
 			$('.home-search span').text('详细资料');
 		})
 		$('.denglu_sheZhi').on('click',function(){
-			var gerRemarksName = toNames,
+			var gerRemarksName = window.localStorage.getItem('toNames'),
 				getEemarksNuber = window.localStorage.getItem('remarksNuber');
 			$('.tanChuang').show();
 			$('.home-search span').text('添加备注');
@@ -297,7 +297,7 @@
 			if(this.innerText == '移除好友'){
 				console.log(this.innerText);
 				var list = {
-					'removeName': toNames,
+					'removeName': window.localStorage.getItem('toNames'),
 					'fromNumber': myName,
 					'removeNumber': toChatName
 				}

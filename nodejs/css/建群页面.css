@@ -100,17 +100,17 @@
 .yijian .denglu-text .beiZhu{
 	width: 90.8%;
 	margin: 0 auto;
-	padding:0.2rem 0;
+	padding:0.2rem 0 0.1rem 0;
 	/* border-top: 1px solid #d0d0d0; */
 }
 .yijian .denglu-text input{
 	width: 100%;
-	height:0.3rem;
+	line-height:0.5rem;
 	border:none;
 	outline:none;
 	cursor: pointer;
 	caret-color: #ff7a59;
-	font-size:0.26rem;
+	font-size:0.30rem;
 }
 .yijian .denglu-text input::-webkit-input-placeholder {
   color: #d0d0d0;

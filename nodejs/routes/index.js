@@ -835,7 +835,6 @@ app.post("/buildingGroup",function(req,res,next){
 		});
 	});
 });
-
 //移除本群
 app.post("/buildingGroup_move",function(req,res,next){
 	var resto= res,
@@ -856,7 +855,27 @@ app.post("/buildingGroup_move",function(req,res,next){
 		});
 	});
 });
-//本群添加成员
+//转让本群
+//app.post("/buildingGroup_Transfer",function(req,res,next){
+//	var resto= res,
+//		reqs = req,
+//		result = {'code':1001,'msg':"移除失败请重新操作"};
+//		// req.body = JSON.parse(req.body.nickName);
+//	console.log("post请求参数：",req.body.nickName);
+//	MongoClient.connect(url, function(err, db) {
+//		var dbo = db.db("runoob");
+//		var whereStr = {"buildingGroupName":req.body.nickName};  // 查询条件
+//		dbo.collection("buildingGroup").deleteOne(whereStr, function(err, obj) {
+//			if (err) throw err;
+//			console.log("该群成功移除");
+//			db.close();
+//			result.code = 200;
+//			result.msg = "该群成功移除";
+//			resto.send(result);
+//		});
+//	});
+//});
+//本群添加成员或转让本群；
 app.post("/buildingGroup_add",function(req,res,next){
 	var resto= res,
 		reqs = req,
@@ -872,16 +891,38 @@ app.post("/buildingGroup_add",function(req,res,next){
 			if(result_1[0]){
 				console.log(result_1[0]);
 				var obj = result_1[0];
-				for(var i=0; i<req.body.nickName.length; i++){
-					obj.nickName.push(req.body.nickName[i]);
-					obj.name.push(req.body.name[i]);
-					obj.imgId.push(req.body.imgId[i]);
+				var obj_1 = [],obj_2 = [],obj_3 = [];
+				if(req.body.moveName == 'yes'){
+					for(var i=0; i<obj.name.length; i++){
+						if(obj.name[i].name != req.body.name[0].name){
+							obj_1.push(obj.name[i]);
+							obj_2.push(obj.nickName[i]);
+							obj_3.push(obj.imgId[i]);
+						}
+					}
+					obj.name = obj_1;
+					obj.nickName = obj_2;
+					obj.imgId = obj_3;
+					obj.text = req.body.text;
+					console.log('判断转让本群',req.body.Transfer);
+				}else{
+					for(var i=0; i<req.body.nickName.length; i++){
+						obj.nickName.push(req.body.nickName[i]);
+						obj.name.push(req.body.name[i]);
+						obj.imgId.push(req.body.imgId[i]);
+					}
 				}
 				console.log('添加成员更改后的数据',obj);
 				MongoClient.connect(url, function(err, db) {
 					var dbo = db.db("runoob");
 					var whereStr = {'buildingGroupName':req.body.buildingGroupName};  // 查询条件
-					var updateStr = {$set: { "nickName" : obj.nickName, "name" : obj.name, "imgId" : obj.imgId }};//更换内容
+					var updateStr = null;
+					if(req.body.Transfer){
+						//判断转让本群
+						updateStr = {$set: {'textName': req.body.textName,'groupOwner': req.body.Transfer, "nickName" : obj.nickName, "name" : obj.name, "imgId" : obj.imgId }};//更换内容
+					}else{
+						updateStr = {$set: {'textName': req.body.textName, "nickName" : obj.nickName, "name" : obj.name, "imgId" : obj.imgId }};//更换内容
+					}
 					console.log('第-道',updateStr);
 					dbo.collection("buildingGroup").updateOne(whereStr, updateStr, function(err, res) {
 						if (err) throw err;
@@ -889,7 +930,11 @@ app.post("/buildingGroup_add",function(req,res,next){
 						if(res){
 							console.log("第2道更改数据成功");
 							db.close();
-							resto.send({code:200,msg:'已添加成功'});
+							if(req.body.moveName == 'yes'){
+								resto.send({code:200,msg:'成功退出'+req.body.buildingGroupName});
+							}else{
+								resto.send({code:200,msg:'已添加成功'});
+							}
 						}else{
 							resto.send(result);
 						}

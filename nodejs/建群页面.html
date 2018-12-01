@@ -37,7 +37,8 @@
 	<script src="jquery.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
 		var listName = [],page = 1,pageSize = 20,socket = io.connect('http://127.0.0.1:8080');
-		var local_name = window.localStorage.getItem('name'),myIcon = window.localStorage.getItem('myName'),imgId = window.localStorage.getItem('imgId');
+		var local_name = window.localStorage.getItem('name'),myIcon = window.localStorage.getItem('myName'),imgId = window.localStorage.getItem('imgId'),
+		textName = null;
 		
 		function socketIo(){
 			//消息监听
@@ -274,6 +275,7 @@
 						});
 						objs_nickName.push(values.friendNickName);
 						objs_img.push(values.imgId);
+						textName += values.friendName*1;
 					}
 				}
 				if(objs_name.length == 0){
@@ -288,13 +290,14 @@
 					return;
 				}
 				console.log(objs_name.length);
+				textName += local_name*1;
+				textName = textName.toString();
 				objs_name.push({
 					'name': local_name,
 					'newsNumber': 0
 				});
 				objs_nickName.push(myIcon);
 				objs_img.push(imgId);
-				
 				var list = {
 					'nickName': objs_nickName,
 					'name': objs_name,
@@ -304,7 +307,8 @@
 					'text': myIcon+'发起了群聊...',
 					'buildingGroupName': buildingGroupName,
 					'newsNumber': 0,
-					'groupOwner': myIcon
+					'groupOwner': myIcon,
+					'textName': textName
 				};
 				list = JSON.stringify(list);
 				console.log(list);

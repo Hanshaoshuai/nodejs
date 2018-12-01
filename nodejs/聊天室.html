@@ -24,6 +24,8 @@
 					<ul>
 						<li>查看所有成员</li>
 						<li>添加成员</li>
+						<li class = 'groupOwner_log'>退出本群</li>
+						<li class = 'groupOwner' style="display:none;">转让退出本群</li>
 						<li class = 'groupOwner' style="display:none;">移除本群</li>
 					</ul>
 					<!-- <div class="fanhui-right">
@@ -52,7 +54,30 @@
 						</div>
 					</div>
 				</div>
-				
+			</div>
+			<div class="tanCeng">
+				<div class="tanCeng_cont">
+					<div class="tanCeng_cont_top">
+						请选择转让群主
+					</div>
+					<div class="tanCeng_cont_box">
+						<div class="tanCeng_cont_box_tex">
+							<!--<div class="content-food border-bottom">
+								<label><div><div class="imgas">
+									<p>
+										<img class="border" src="'+data.body[i].headPortrait+'" alt="" />
+									</p>
+								</div>
+									<span class="first">'+nickName+'</span>
+									<input name="Fruit" type="radio" value="" id= "checkboxs"/></div></label>
+							</div>-->
+						</div>
+					</div>
+					<div class="tanCeng_cont_bottom">
+						<font>确定</font>
+						<span>取消</span>
+					</div>
+				</div>
 			</div>
 		</div>
 	</body>
@@ -60,15 +85,18 @@
 	<script type="text/javascript">
 		var leave=document.getElementById('leaveBtn');
 		var socket = io.connect('http://127.0.0.1:8080'),
-			lists = {},
-			image = {},
+			lists = {},textName = null,textName_1 = null,
+			image = {},toId = '',
+			textNameOld = window.localStorage.getItem('textName'),
 			Myimg = window.localStorage.getItem('myHeadPortrait'),
 			Youimg = window.localStorage.getItem('headPortrait'),
 			nickNameTop = window.localStorage.getItem('nickName'),
 			chatType = window.localStorage.getItem('type'),
 			myLocName = window.localStorage.getItem('name'),
 			locMyName = window.localStorage.getItem('myName'),
-			groupOwner = window.localStorage.getItem('groupOwner');
+			groupOwner = window.localStorage.getItem('groupOwner'),
+			imgId = window.localStorage.getItem('imgId'),
+			imgIdLoc = JSON.parse(window.localStorage.getItem('imgIdLoc'));
 			
 		var page = 1,pageSize = 10,dateTimes = '', heights = '', heights1 = '';
 			expressionList = [
@@ -93,18 +121,25 @@
 		})();
 		if(groupOwner == locMyName){
 			$('.groupOwner').show();
+			$('.groupOwner_log').hide();
 		}
 		if(chatType == 'chat'){
 			console.log('屏蔽此人');
 			$('.xiangmu-rigth').attr({'class':'xiangmu-rigth rigth_background'});
 		}
-		
 		function Default() {
 			this.props = function () {
 				this.tupian();
 				this.getList('types');
 				this.socketIo();
 				this.prent=$('.boxTexte')[0];
+			},
+			this.toChat = function(text,value){
+				if(value == myLocName){
+					return;
+				}
+				console.log(text,value);
+				toId = text;
 			},
 			this.tupian = function (){
 				heights = $("#shuru").height();
@@ -119,10 +154,65 @@
 				}
 				$('.xiangmu-left').on('click',function(){
 					window.location.href = '聊天列表.html';
+				});
+				$('.tanCeng_cont_bottom font').on('click',function(){
+					if(toId == ''){
+						return;
+					}
+					console.log('确定');
+					for(var i=0; i<imgIdLoc.length; i++){
+						if(imgIdLoc[i].name != myLocName){
+							textName += imgIdLoc[i].name*1;
+						}
+						textName_1 += imgIdLoc[i].name*1;
+					}
+					var list = {
+						'nickName': [locMyName],
+						'name': [{'name': myLocName,'newsNumber': 0}],
+						'imgId': [imgId],
+						'text': '【'+locMyName+'】已退出将本群转让给'+'【'+toId+'】为本群群主',
+						'buildingGroupName': nickNameTop,
+						'moveName': 'yes',
+						'Transfer': toId,
+						'textName': textName.toString()
+					};
+					list = JSON.stringify(list);
+					console.log(list,textName,textName_1,nickNameTop);
+					//转让本群
+					$.ajax({
+						type:'post',
+						url:'http://127.0.0.1:8080/buildingGroup_add',
+						data:{'data':list},
+						success:function(data){
+							console.log(data);
+							if(data.code == 200 ){
+								alert(data.msg);
+								socket.emit('clientmessage', {
+									fromName: myLocName,
+									toName: [{'name': myLocName,'newsNumber': 0}],
+									text_first: 'yes',
+									text: '【'+locMyName+'】已退出将本群转让给'+'【'+toId+'】为本群群主',
+									nickName: nickNameTop,
+									textName: nickNameTop+textName,
+									textName_1: nickNameTop+textNameOld,
+									Transfer: toId
+								})
+								window.location.href = '聊天列表.html';
+							}
+						},
+						error:function(){
+							console.log('error');
+						}
+					})
+				});
+				$('.tanCeng_cont_bottom span').on('click',function(){
+					console.log('取消');
+					toId = '';
+					$('.tanCeng').hide();
 				})
 				$(document).on('click',function(e){
 				//				console.log(e)
-					if (!$(e.target).closest(".xiangmu-rigth,.xiangmu-rigth").length) {
+					if (!$(e.target).closest(".xiangmu-rigth,.groupOwner,.tanCeng").length) {
 						$('.home-search ul').hide().removeAttr('class');
 				   }
 				})
@@ -150,7 +240,82 @@
 						$('.box_list').show();
 						$('.home-search ul').hide().removeAttr('class');
 						window.location.href = '添加成员.html';
-					}else{
+					}else if(this.innerText == '退出本群'){
+						console.log(this.innerText);
+						$('.box_friend').hide();
+						$('.box_list').show();
+						$('.home-search ul').hide().removeAttr('class');
+						for(var i=0; i<imgIdLoc.length; i++){
+							if(imgIdLoc[i].name != myLocName){
+								textName += imgIdLoc[i].name*1;
+							}
+							textName_1 += imgIdLoc[i].name*1;
+						}
+						var list = {
+							'nickName': [locMyName],
+							'name': [{'name': myLocName,'newsNumber': 0}],
+							'imgId': [imgId],
+							'text': '【'+locMyName+'】已退出本群',
+							'buildingGroupName': nickNameTop,
+							'moveName': 'yes',
+							'textName': textName.toString()
+						};
+						list = JSON.stringify(list);
+						console.log(list,nickNameTop+textName,nickNameTop+textName_1);
+						//退出本群
+						$.ajax({
+							type:'post',
+							url:'http://127.0.0.1:8080/buildingGroup_add',
+							data:{'data':list},
+							success:function(data){
+								console.log(data);
+								if(data.code == 200 ){
+									alert(data.msg);
+									socket.emit('clientmessage', {
+										fromName: myLocName,
+										toName: [{'name': myLocName,'newsNumber': 0}],
+										text_first: 'yes',
+										text: '【'+locMyName+'】已退出本群',
+										nickName: nickNameTop,
+										textName: nickNameTop+textName,
+										textName_1: nickNameTop+textNameOld
+									})
+									window.location.href = '聊天列表.html';
+								}
+							},
+							error:function(){
+								console.log('error');
+							}
+						})
+						
+					}else if(this.innerText == '转让退出本群'){
+						console.log(this.innerText);
+						$('.tanCeng').show();
+						var monList = '',name_list = '',iconName_list = '';
+//						$('.box_friend').hide();
+//						$('.box_list').show();
+//						$('.home-search ul').hide().removeAttr('class');
+//						window.location.href = '聊天列表.html';
+						for(var i=0; i<imgIdLoc.length; i++){
+							var disabled = null;
+							if(imgIdLoc[i].name == myLocName){
+								disabled = 'disabled="disabled"';
+							}
+							name_list = "'"+imgIdLoc[i].nickName+"'";
+							iconName_list = "'"+imgIdLoc[i].name+"'";
+							monList += '<div class="content-food border-bottom" onClick="that.toChat('+name_list+','+iconName_list+')">'+
+											'<label><div><div class="imgas">'+
+												'<p>'+
+													'<img class="border" src="'+imgIdLoc[i].classIcon+'" alt="" />'+
+												'</p>'+
+											'</div>'+
+												'<span class="first">'+imgIdLoc[i].nickName+'</span>'+
+												'<input '+disabled+' name="Fruit" type="radio" value="'+imgIdLoc[i].name+'" id= "checkboxs"/></div></label>'+
+										'</div>'
+						}
+						$('.tanCeng_cont_box_tex').html(monList);
+						
+					}else if(this.innerText == '移除本群'){
 						console.log(this.innerText);
 						//移除本群;
 						$.ajax({

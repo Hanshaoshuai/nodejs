@@ -21,16 +21,18 @@
   color: #fff;
   z-index: 21;
 }
-.denglu .xiangmu-header .xiangmu-left {
-  position: absolute;
-  height: 100%;
-  padding-left: 0.32rem;
-  display: inline-block;
-  top: 0.08rem;
-  left: 0;
-}
-.denglu .xiangmu-header .xiangmu-left img {
-  height: 0.4rem;
+
+.denglu .xiangmu-left{
+	position:absolute;
+	display:inline-block;
+	top:0.2rem;
+	left:0.3rem;
+	width:0.5rem;
+	height:0.5rem;
+	/*line-height:0.7rem;
+	font-size: 0.32rem;*/
+	background-image: url('../img/fanhui.png');
+	background-size:100% 100%;
 }
 .denglu .contents {
   /* position: fixed; */
@@ -89,13 +91,12 @@
   height: 0.52rem;
   flex: 1;
   padding-left: 0.2rem;
-  border-left: 1px solid #d0d0d0;
 	border:none;
 	outline:none;
 	cursor: pointer;
-	caret-color: auto;
 	caret-color: #ff7a59;
-	font-size:0.26rem;
+	font-size:0.28rem;
+	border-left: 1px solid #d0d0d0;
 }
 .denglu .contents .denglu-text ul li input::-webkit-input-placeholder {
   color: #d0d0d0;
@@ -108,8 +109,11 @@
   width: 0.28rem;
   height: 0.32rem;
   margin: 0.1rem 0.32rem 0 0.26rem;
-  background-image: url("../DengLu/img/gerens.png");
+  background-image: url("../img/6nichengzhao.png");
   background-size: 100% 100%;
+}
+.denglu .contents .denglu-text ul li .shouJi{
+	background-image: url("../img/yonghu.png");
 }
 .denglu .contents .denglu-text ul li font {
   display: inline-block;
@@ -120,7 +124,7 @@
   background-size: 100% 100%;
 }
 .denglu .contents .denglu-text ul li:last-child span {
-  background-image: url("../DengLu/img/mimas.png");
+  background-image: url("../img/mima.png");
 }
 .denglu .contents .denglu-text ul li:last-child font {
   display: inline-block;
@@ -135,7 +139,7 @@
 	border-bottom: 1px solid #d0d0d0;
 }
 .denglu .contents .denglu-text ul li:nth-child(3n) span {
-  background-image: url("../DengLu/img/yanzheng.png");
+  background-image: url("../img/yanzhengma2.png");
 }
 .denglu .contents .denglu-text ul li:nth-child(3n) font {
   display: inline-block;
