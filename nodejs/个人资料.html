@@ -89,6 +89,7 @@
 	<script type="text/javascript">
 		var lists = {},
 			image = {},
+			LLNumber = window.localStorage.getItem('LLNumber')
 			sexImage = window.localStorage.getItem('mySex'),
 			myHead = window.localStorage.getItem('myHeadPortrait'),
 			toNames = window.localStorage.getItem('myName'),
@@ -96,7 +97,7 @@
 			myName = window.localStorage.getItem('name'),
 			myRegion = window.localStorage.getItem('myRegion');
 		$('.texts .first i').text(toNames);
-		$('.lalst_name a').text(toNames);
+		$('.lalst a').text(LLNumber);
 		$('.fankiu .imgas img')[0].src = myHead;
 		if(sexImage !== 'Sir'){
 			$('.texts .first a').attr({'class':'image'});
@@ -189,6 +190,9 @@
    			}
 		})
 		$('.denglu-food').on('click',function(){
+			window.localStorage.setItem('nickName',toNames);
+			window.localStorage.setItem('toChatName',myName);
+			window.localStorage.setItem('type','chat');
 			window.location.href = '聊天室.html';
 		});
 		

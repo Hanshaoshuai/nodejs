@@ -43,10 +43,11 @@
 					<ul>
 						<li>
 							<div class="voice"></div>
+							<div class="voice_botten"><div class="voice_botten_text">按住&nbsp;说话</div></div>
 							<p contenteditable="true" placeholder="请详输入内容..." id="texts" class="mint-field-core"></p>
 							<!-- <textarea placeholder="请详输入内容..." id="texts" class="mint-field-core"></textarea> -->
 							<div class="expressions"></div>
-							<div class="fasong"><span>发送</span></div>
+							<div class="fasong"><span>发送</span><font></font></div>
 						</li>
 					</ul>
 					<div class="expression">
@@ -86,7 +87,8 @@
 		var leave=document.getElementById('leaveBtn');
 		var socket = io.connect('http://127.0.0.1:8080'),
 			lists = {},textName = null,textName_1 = null,
-			image = {},toId = '',
+			image = {},toId = '',toNameId = '',
+			remarksNuberL = window.localStorage.getItem('remarksNuber');
 			textNameOld = window.localStorage.getItem('textName'),
 			Myimg = window.localStorage.getItem('myHeadPortrait'),
 			Youimg = window.localStorage.getItem('headPortrait'),
@@ -119,13 +121,19 @@
 			}
 			$('.expressionList').html(textList);
 		})();
-		if(groupOwner == locMyName){
+		if(groupOwner == myLocName){
 			$('.groupOwner').show();
 			$('.groupOwner_log').hide();
 		}
 		if(chatType == 'chat'){
 			console.log('屏蔽此人');
 			$('.xiangmu-rigth').attr({'class':'xiangmu-rigth rigth_background'});
+			if(remarksNuberL == 'undefined' || remarksNuberL == '' || remarksNuberL == 'no'){
+				$('.xiangmu-rigth').hide();
+				// window.location.href = "tel:" + remarksNuberL;
+			}else{
+				$('.xiangmu-rigth').attr({'class':'xiangmu-rigth dianhua'});
+			}
 		}
 		function Default() {
 			this.props = function () {
@@ -139,7 +147,8 @@
 					return;
 				}
 				console.log(text,value);
-				toId = text;
+				toNameId = text;
+				toId = value;
 			},
 			this.tupian = function (){
 				heights = $("#shuru").height();
@@ -148,12 +157,15 @@
 				if(nickNameTop != 'no' && chatType == 'chat'){
 					$('.yijian .toNames').text(nickNameTop);
 				}else if(chatType == 'groupChat'){
-					$('.yijian .toNames').text(nickNameTop + '（'+window.localStorage.getItem('localNumber')+'）');
+					$('.yijian .toNames').html('<i class="first">'+nickNameTop + '</i><i class="last">（'+window.localStorage.getItem('localNumber')+'）</i>');
 				}else{
 					$('.yijian .toNames').text(window.localStorage.getItem('toNames'));
 				}
 				$('.xiangmu-left').on('click',function(){
 					window.location.href = '聊天列表.html';
+				});
+				$('.fasong font').on('click',function(){
+					console.log('添加');
 				});
 				$('.tanCeng_cont_bottom font').on('click',function(){
 					if(toId == ''){
@@ -170,7 +182,7 @@
 						'nickName': [locMyName],
 						'name': [{'name': myLocName,'newsNumber': 0}],
 						'imgId': [imgId],
-						'text': '【'+locMyName+'】已退出将本群转让给'+'【'+toId+'】为本群群主',
+						'text': '【'+locMyName+'】已退出将本群转让给'+'【'+toNameId+'】为本群群主',
 						'buildingGroupName': nickNameTop,
 						'moveName': 'yes',
 						'Transfer': toId,
@@ -191,7 +203,7 @@
 									fromName: myLocName,
 									toName: [{'name': myLocName,'newsNumber': 0}],
 									text_first: 'yes',
-									text: '【'+locMyName+'】已退出将本群转让给'+'【'+toId+'】为本群群主',
+									text: '【'+locMyName+'】已退出将本群转让给'+'【'+toNameId+'】为本群群主',
 									nickName: nickNameTop,
 									textName: nickNameTop+textName,
 									textName_1: nickNameTop+textNameOld,
@@ -219,6 +231,7 @@
 				$('.xiangmu-rigth').on('click',function(){
 					if(chatType == 'chat'){
 						console.log('屏蔽此人');
+						window.location.href = "tel:" + remarksNuberL;
 						return;
 					}
 					if($('.home-search ul').attr('class')){
@@ -348,13 +361,21 @@
 				});
 							
 				$("#texts").bind('input propertychange click', function() {
+					// console.log('kkkkkkk',$("#texts")[0].innerText);
+					if($("#texts")[0].innerText == ''){
+						$('.fasong').css({'background':'none'}).find('span').hide();
+						$('.fasong font').show();
+					}else{
+						$('.fasong font').hide();
+						$('.fasong').css({'background':'#ff7a59'}).find('span').show();
+					}
 					if($('.expression').attr("show")){
-						console.log('kkkkkkk');
+						console.log('kkkkkkk',$("#texts").val);
 						$('.expressions').attr({"class":'expressions'});
 						$('.expression').hide().removeAttr("show");
 					}
 					var height = $("#shuru").height();
-					console.log('kkkkkkk'+height);
+					// console.log('kkkkkkk'+height);
 					if(height > (heights+6)){
 						heights = height;
 						$('#box').css({'padding-bottom': height+12+'px'});
@@ -373,8 +394,15 @@
 				$('.voice').on('click',function(){
 					if($('.voice').attr("show")){
 						$('.voice').attr({"class":'voice'}).removeAttr("show");
+						$('.voice_botten').hide();
+						$('.mint-field-core').show();
 					}else{
 						$('.voice').attr({"class":'voice voice_image',"show":'show'});
+						$('.voice_botten').show();
+						$('.mint-field-core').hide();
+						$('.expressions').attr({"class":'expressions'});
+						$('.expression').hide().removeAttr("show");
+						$('#box').css({'padding-bottom': $("#shuru").height()+12+'px'});
 					}
 				})
 				//点击表情包
@@ -386,10 +414,16 @@
 						$('.expressions').attr({"class":'expressions'});
 						$('.expression').hide().removeAttr("show");
 						$('#box').css({'padding-bottom': $("#shuru").height()+12+'px'});
+						$('.voice_botten').hide();
+						$('.mint-field-core').show();
 					}else{
 						$('.expression').show().attr({"show":'show'});
 						$('.expressions').attr({'class': 'expressions expres_image'});
 						$('#box').css({'padding-bottom': $("#shuru").height()+12+'px'});
+						$('.voice_botten').hide();
+						$('.mint-field-core').show();
+						$('.voice').attr({"class":'voice'}).removeAttr("show");
+						// $('.voice').attr({"class":'voice voice_image',"show":'show'});
 						that.scrollHeights();
 					}
 				})
@@ -398,6 +432,8 @@
 					console.log(this.innerHTML);
 					// $('#texts')[0].innerText += this.innerText;
 					// $( '#texts' ).focus();
+					$('.fasong font').hide();
+					$('.fasong').css({'background':'#ff7a59'}).find('span').show();
 					that.toEnd(this.innerHTML);
 					that.scrollHeights();
 				});
@@ -695,16 +731,19 @@
 							that.FasongShijian();
 							
 							if(data.text.text.friends == 'yes'){
-								that.TishiNeirong(data.text.text.text);
+								that.TishiNeirong('你通过了对方的好友验证请求，现在可以开始聊天啦😄');
+//								that.TishiNeirong(data.text.text.text);
 							}else if(data.text.text.friend == 'no'){
-								that.TishiNeirong('您向对方发送了好友请求');
+								that.TishiNeirong('您向对方发送了好友验证请求，请耐心等待！');
 							}else if(data.text.text.friends == 'no'){
-								that.TishiNeirong('您拒绝了对方的好友请求！');
+								that.TishiNeirong('您拒绝了对方的好友验证请求！');
 							}else{
 								that.My('',data.text.text);
 							}
 							// that.My('',data.text.text);
 							$('#texts')[0].innerText = '';
+							$('.fasong').css({'background':'none'}).find('span').hide();
+							$('.fasong font').show();
 						}else if(data.text.fromName === myLocName && data.text.toName != '' && data.text.toName != myLocName){
 							console.log('111-',data.text);
 							that.My('',data.text.text);
@@ -719,12 +758,12 @@
 								$('.shuru').show();
 								that.TishiNeirong(data.text.text.text);
 							}else if(data.text.text.friend == 'no'){
-								that.You('yes','',"😄来自"+data.text.fromName+'的好友请求，是否同意！');
+								that.You('yes','',"😄来自"+data.text.fromName+'的好友验证请求，是否同意！');
 								$('.shuru').hide();
 								// that.TishiNeirong(data.text.text);
 							}else{
 								if(data.text.text.friends == 'no'){
-									that.You('yes','no','🙁对方拒绝了您的好友请求！是否再次添加好友...',"no")
+									that.You('yes','no','🙁对方拒绝了您的好友验证请求！是否再次添加好友...',"no")
 								}else{
 									that.You('yes','yes',data.text.text);
 								}
@@ -764,7 +803,7 @@
 // 					dom.scrollTop(el_height)//  ===> 设置滚动条的位置，滚动到底部
 				}
 				//发送消息
-				$(".fasong").click(function() {
+				$(".fasong span").click(function() {
 					var timeHour = new Date().getTime();
 					var dateYes = 'no';
 					if(timeHour - dateTimes > 100000){
@@ -806,7 +845,8 @@
 								text: Trim($('#texts')[0].innerText),
 								fromTo: fromChat,
 								nickName: nickNameTop,
-								dateTimes : dateYes
+								dateTimes: dateYes,
+								myIconName: locMyName
 							})
 						}
 						
@@ -822,7 +862,7 @@
 						'type':chatType,
 						'page':page,'pageSize':pageSize,
 						'friendName':window.localStorage.getItem('toChatName'),
-						'myName':window.localStorage.getItem('name'),
+						'myName':myLocName,
 						'nickName': nickNameTop
 					},
 					success:function(data){
@@ -844,18 +884,20 @@
 									yes = 'yes'
 								}
 								// console.log('000',data.body[i]);
-								if(data.body[i].fromName == window.localStorage.getItem('name')){
+								if(data.body[i].fromName == myLocName){
 									// console.log('111',data.body[i]);
 									if(data.body[i].type == "chat"){
 										that.tousuoGo(that.numToTime(data.body[i].dateTime),data.body[i].dateTimes);
 										if(data.body[i].text.friends == 'yes'){
 											$('.shuru').show();
-											that.TishiNeirong(data.body[i].text.text);
+											that.TishiNeirong('你已通过对方的好友验证请求，现在可以开始聊天啦😄');
+//											that.TishiNeirong(data.body[i].text.text);
 										}else if(data.body[i].text.friend == 'no'){
-											that.TishiNeirong('您向对方发送了好友请求，请耐心等待！');
+											$('.shuru').hide();
+											that.TishiNeirong('您向对方发送了好友验证请求，请耐心等待！');
 										}else if(data.body[i].text.friends == 'no'){
 											$('.shuru').hide();
-											that.TishiNeirong('您拒绝了对方的好友请求！');
+											that.TishiNeirong('您拒绝了对方的好友验证请求！');
 										}else{
 											that.My('',data.body[i].text);
 										}
@@ -868,31 +910,32 @@
 										}
 									}
 									
-								}else if(data.body[i].fromName === window.localStorage.getItem('name') && (data.body[i].toName !== '') && data.text.toName != window.localStorage.getItem('name')){
+								}else if(data.body[i].fromName === myLocName && (data.body[i].toName !== '') && data.text.toName != myLocName){
 									// console.log('222',data.body[i]);
 									that.My('',data.body[i].text);
-								}else if(data.body[i].toName === '' && data.body[i].fromName === window.localStorage.getItem('name')){
+								}else if(data.body[i].toName === '' && data.body[i].fromName === myLocName){
 									
-								}else if(data.body[i].toName === '' && data.body[i].fromName !== window.localStorage.getItem('name')){
+								}else if(data.body[i].toName === '' && data.body[i].fromName !== myLocName){
 // 									
-								}else if(data.body[i].toName === window.localStorage.getItem('name')){
+								}else if(data.body[i].toName === myLocName){
 									// console.log('333',data.body[i]);
 									that.tousuoGo(that.numToTime(data.body[i].dateTime),data.body[i].dateTimes);
 									if(data.body[i].text.friend == 'no'){
 										if(data.body[i].friend == 'yes'){
-											that.You(yes,'',"😄来自"+data.body[i].fromName+'的好友请求，是否同意！',1);
+											that.You(yes,'',"😄来自"+data.body[i].fromName+'的好友验证请求，是否同意！',1);
 										}else{
-											that.You(yes,'',"😄来自"+data.body[i].fromName+'的好友请求，是否同意！');
+											that.You(yes,'',"😄来自"+data.body[i].fromName+'的好友验证请求，是否同意！');
 											$('.shuru').hide();
 										}
 									}else{
 										if(data.body[i].text.friends == 'yes'){
 											$('.shuru').show();
-											that.TishiNeirong(data.body[i].text.text);
+											that.You(yes,'yes',data.body[i].text.text);
+//											that.TishiNeirong(data.body[i].text.text);
 										}else if(data.body[i].text.friends == 'no'){
 											$('.shuru').hide();
 											// that.TishiNeirong('对方拒绝了您的好友请求！');
-											that.You(yes,'no','🙁对方拒绝了您的好友请求！是否再次添加好友...',data.body[i].friend)
+											that.You(yes,'no','🙁对方拒绝了您的好友验证请求！是否再次添加好友...',data.body[i].friend)
 										}else{
 											that.You(yes,'yes',data.body[i].text)
 										}
@@ -902,7 +945,7 @@
 									if(data.body[i].text_first){
 										that.TishiNeirong(data.body[i].text);
 									}else{
-										that.You(yes,'yes',data.body[i].text,data.body[i].fromName);
+										that.You(yes,'yes',data.body[i].text,data.body[i].fromName,data.body[i].myIconName);
 									}
 								}
 							}
@@ -994,7 +1037,7 @@
 				// this.FasongShijian();
 				// contentTexte.scrollTop=contentTexte.scrollHeight;  //滚动条始终在下面
 			},
-			this.You = function (yes,type,cont,DianJi,text_first,remarksNuber){		//对方要发送信息处理函数
+			this.You = function (yes,type,cont,DianJi,myIconName,remarksNuber){		//对方要发送信息处理函数
 				// var contentTexte=this.$refs.contentTexte;
 				var my=document.createElement("div");			//创建元素		对方要发送的dom
 				var	neiRong=document.createElement("div");
@@ -1011,8 +1054,10 @@
 				imgs.style.backgroundSize="100% 100%";
 //				img.setAttribute("class","border");
 //						span.innerText=texts;							//对应插入
-				neiRong.appendChild(span);
-				neiRong.appendChild(imgs);
+				if(!myIconName){
+					neiRong.appendChild(span);
+					neiRong.appendChild(imgs);
+				}
 				imaF.appendChild(img);
 				touXiang.appendChild(imaF);
 				my.appendChild(touXiang);
@@ -1059,7 +1104,7 @@
 								}
 							}
 						}
-						console.log('对方个人资料',yes,type,cont,DianJi,text_first,remarksNuber);
+						console.log('对方个人资料',yes,type,cont,DianJi,myIconName,remarksNuber);
 						window.location.href="资料详情.html";
 					}
 				}
@@ -1087,13 +1132,22 @@
 						for(var i=0; i<imglist.length; i++){
 							if(imglist[i].name == DianJi){
 								img.src = imglist[i].classIcon;
-								
 								break;
 							}
 						}
-						span.innerHTML=cont;							//对应插入
+						var from_name = document.createElement("div");
+						from_name.style.fontSize = "0.26rem";
+						from_name.style.color = "#07111B";
+						from_name.style.lineHeight = '0.2rem';
+						from_name.style.padding = '0 0 0.1rem 0.1rem';
+						from_name.style.color = 'rgb(180, 180, 180)';
+						from_name.innerHTML = myIconName;
+						neiRong.appendChild(from_name);
+						neiRong.appendChild(span);
+						neiRong.appendChild(imgs);
+						span.innerHTML = cont;							//对应插入
 					}else{
-						span.innerHTML=cont;							//对应插入
+						span.innerHTML = cont;							//对应插入
 					}
 				}else{
 					span.appendChild(this.HuanquSenqing(cont,DianJi,type));
@@ -1233,7 +1287,7 @@
 									socket.emit('clientmessage', {
 										fromName: myName,
 										toName: locFromName,
-										text: {'from':myName,'text':'你们已成为好友可以继续聊天啦！😄','friends':'yes'},
+										text: {'from':myName,'text':'我通过了你的好友验证请求，我们现在可以聊天啦！😄','friends':'yes'},
 										dateTimes : dateYes
 									})
 								}
@@ -1287,7 +1341,7 @@
 								socket.emit('clientmessage', {
 									fromName: myName,
 									toName: locFromName,
-									text: {'from':myName,'text':'您拒绝了对方的好友请求！','friends':'no'},
+									text: {'from':myName,'text':'您拒绝了对方的好友验证请求！','friends':'no'},
 									dateTimes : dateYes
 								})
 							}

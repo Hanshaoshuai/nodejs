@@ -1,0 +1,1 @@
+[{"fromName":"18310998379","toName":"18310998372","text":{"friend":"no","addName":"uu"},"type":"chat","dateTime":1543814486000,"friend":"yes"},{"fromName":"18310998372","toName":"18310998379","text":{"from":"18310998372","text":"你们已成为好友可以继续聊天啦！😄","friends":"yes"},"dateTimes":"no","type":"chat","dateTime":1543814540000}]

@@ -97,11 +97,19 @@
 	background:#fff;
 }
 .box .fankiu .content-food{
+	position:relative;
 	width:95%;
 	margin:0 auto;
 	padding:0.22rem 0 0.22rem 0;
 	/*line-height:0.46rem;*/
 	font-size:0.32rem;
+}
+.box .fankiu .content-food .times{
+	position: absolute;
+	top:0.22rem;
+	right:0rem;
+	font-size:0.24rem;
+	color: #BBBBBB;
 }
 .box .fankiu .content-food .imgas{
 	display:inline-block;

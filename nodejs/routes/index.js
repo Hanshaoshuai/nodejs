@@ -220,7 +220,14 @@ app.post("/post",function(req,res,next){
 		});
 	});
 });
-
+function random3(len){
+		var pwd = "";
+		for(var idx = 0; idx < len; idx ++){
+				var seed = parseInt(Math.random() * 9);
+				pwd = pwd + seed;
+		}
+		return pwd;
+}
 //注册
 app.post("/post1",function(req,res,next){
 	var resto= res,
@@ -229,6 +236,7 @@ app.post("/post1",function(req,res,next){
   console.log("post请求参数：",req.body);
 	req.body.signIn = '';
 	var dateTime = parseInt(Date.parse(new Date())).toString();
+	req.body.LLNumber = 'll'+random3(9);
 	req.body.linkFriends = [{"friendName":req.body.name,"adopt":'yes',"fromName":req.body.name,"toName":'',"newsNumber":0,"dateTime":dateTime,"chatRecord": "暂无！",}];
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
@@ -543,7 +551,9 @@ app.get("/get2",function(req,res){
 //添加好友
 app.post("/post4",function(req,res,next){
 	var resto= res
+	console.log("请求url：",req.path)
 	console.log("post请求参数：",req.body);
+	var dateTime = parseInt(Date.parse(new Date())).toString();
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var dbo = db.db("runoob");
@@ -568,7 +578,7 @@ app.post("/post4",function(req,res,next){
 							var obj = result[0].linkFriends;
 							obj.push({"friendName":req.body.addNumber,"adopt":'',"fromName":'',"toName":req.body.fromNumber,"newsNumber" : 0 });
 							var whereStr = {'name':req.body.fromNumber};  // 查询条件
-							var updateStr = {$set: { "linkFriends" : obj}};//更换内容
+							var updateStr = {$set: { "linkFriends" : obj,'dateTime': dateTime}};//更换内容
 							console.log('第二道',updateStr);
 							dbo.collection("site").updateOne(whereStr, updateStr, function(err, res) {
 								if (err) throw err;
@@ -589,7 +599,7 @@ app.post("/post4",function(req,res,next){
 								MongoClient.connect(url, function(err, db) {
 									var dbo = db.db("runoob");
 									var whereStr = {'nickName':req.body.addName};  // 查询条件
-									var updateStr = {$set: { "linkFriends" : obj }};//更换内容
+									var updateStr = {$set: { "linkFriends" : obj,'dateTime': dateTime}};//更换内容
 									console.log('第二道',updateStr);
 									dbo.collection("site").updateOne(whereStr, updateStr, function(err, res) {
 										if (err) throw err;
@@ -892,6 +902,7 @@ app.post("/buildingGroup_add",function(req,res,next){
 				console.log(result_1[0]);
 				var obj = result_1[0];
 				var obj_1 = [],obj_2 = [],obj_3 = [];
+				var dateTime = parseInt(Date.parse(new Date())).toString();
 				if(req.body.moveName == 'yes'){
 					for(var i=0; i<obj.name.length; i++){
 						if(obj.name[i].name != req.body.name[0].name){
@@ -919,9 +930,9 @@ app.post("/buildingGroup_add",function(req,res,next){
 					var updateStr = null;
 					if(req.body.Transfer){
 						//判断转让本群
-						updateStr = {$set: {'textName': req.body.textName,'groupOwner': req.body.Transfer, "nickName" : obj.nickName, "name" : obj.name, "imgId" : obj.imgId }};//更换内容
+						updateStr = {$set: {'dateTime': dateTime,'textName': req.body.textName,'groupOwner': req.body.Transfer, "nickName": obj.nickName, "name": obj.name, "imgId": obj.imgId }};//更换内容
 					}else{
-						updateStr = {$set: {'textName': req.body.textName, "nickName" : obj.nickName, "name" : obj.name, "imgId" : obj.imgId }};//更换内容
+						updateStr = {$set: {'dateTime': dateTime,'textName': req.body.textName, "nickName": obj.nickName, "name": obj.name, "imgId": obj.imgId }};//更换内容
 					}
 					console.log('第-道',updateStr);
 					dbo.collection("buildingGroup").updateOne(whereStr, updateStr, function(err, res) {
@@ -1083,7 +1094,7 @@ app.post("/post6",function(req,res,next){
 			var whereStr = {'name':req.body.fromName};  // 查询条件
 			dbo.collection("site").find(whereStr).toArray(function(err, result_1) {
 				if (err) throw err;
-				if(result_1){
+				if(result_1[0]){
 					var obj = result_1[0].linkFriends;
 					for(var i=0; i<obj.length; i++){
 						if(obj[i].friendName == req.body.myName){
@@ -1128,6 +1139,7 @@ function creatNameber(obj,socket){
 				if (err) throw err;
 				if(result_1[0]){
 					console.log("数据：",result_1[0]);
+					var dateTime = parseInt(Date.parse(new Date())).toString();
 					for(var i=0; i<result_1[0].name.length; i++){
 						if(result_1[0].name[i].name != obj.fromName){
 							result_1[0].name[i].newsNumber += 1;
@@ -1137,7 +1149,11 @@ function creatNameber(obj,socket){
 					MongoClient.connect(url, function(err, db) {
 						var dbo = db.db("runoob");
 						var whereStr = {'buildingGroupName':obj.nickName};  // 查询条件
-						var updateStr = {$set: { "name": result_1[0].name, 'text': obj.text }};//更换内容
+						var text_a = '';
+						if(obj.myIconName){
+							text_a = obj.myIconName+'：';
+						}
+						var updateStr = {$set: { "name": result_1[0].name, 'text': text_a + obj.text,'dateTime': dateTime}};//更换内容
 						console.log('第-道',updateStr);
 						dbo.collection("buildingGroup").updateOne(whereStr, updateStr, function(err, res) {
 							if (err) throw err;
@@ -1292,68 +1308,80 @@ app.post('/remarks1', function (req, res) {
 	console.log(req.body);  // 上传的文件信息
 	var resto= res,
 		reqs = req,
-		result = {'code':1001,'msg':"未搜索到结果哦！",'icon':''};
-	
-	
+		result = {'code':1001,'msg':"未搜到结果哦！",'icon':''};
 	MongoClient.connect(url, function(err, db) {
 		var dbo = db.db("runoob");
-		var whereStr = null;
-		if(/^(0|86|17951)?(13[0-9]|15[012356789]|18[0-9]|14[57])[0-9]{8}$/.test(req.body.toChatName)){
-			console.log('shouji');
-			whereStr = {'name':req.body.toChatName};  // 查询条件
-		}else{
-			whereStr = {'nickName':req.body.toChatName};  // 查询条件
-		}
-		
-		dbo.collection("site").find(whereStr).toArray(function(err, result_1) {
-			if (err) throw err;
-			console.log(result_1)
-			if(result_1[0]){
-				// console.log(result_1[0].linkFriends);
-				var obj = result_1[0].linkFriends;
-				var arrayOne = 0;
-				if(result_1[0].myRegion){
-					result.myRegion = result_1[0].myRegion;
+		var whereStr = null,star = 0;
+		function remarksTo(){
+			if(/^(0|86|17951)?(13[0-9]|15[012356789]|18[0-9]|14[57])[0-9]{8}$/.test(req.body.toChatName)){
+				console.log('shouji');
+				whereStr = {'name':req.body.toChatName};  // 查询条件
+			}else{
+				if(star == 0){
+					whereStr = {'nickName':req.body.toChatName};  // 查询条件
+				}else{
+					whereStr = {'LLNumber':req.body.toChatName};  // 查询条件
 				}
-				result.sex = result_1[0].sex;
-				for(var i=0; i<obj.length; i++){
-					// console.log(obj[i].friendName);
-					if(obj[i].friendName == req.body.myName){
+			}
+			dbo.collection("site").find(whereStr).toArray(function(err, result_1) {
+				if (err) throw err;
+				console.log(result_1)
+				if(result_1[0]){
+					// console.log(result_1[0].linkFriends);
+					var obj = result_1[0].linkFriends;
+					var arrayOne = 0;
+					if(result_1[0].myRegion){
+						result.myRegion = result_1[0].myRegion;
+					}
+					result.sex = result_1[0].sex;
+					for(var i=0; i<obj.length; i++){
 						// console.log(obj[i].friendName);
-						console.log(obj[i]);
+						if(obj[i].friendName == req.body.myName){
+							// console.log(obj[i].friendName);
+							console.log(obj[i]);
+							result.code = 200;
+							if(obj[i].remarksName){
+								result.remarksName = obj[i].remarksName;
+								result.remarksNameNick = result_1[0].nickName;
+							}else{
+								result.remarksName = result_1[0].nickName;
+								result.remarksNameNo = 'no';
+							}
+							if(obj[i].remarksNuber){
+								result.remarksNuber = obj[i].remarksNuber;
+							}else{
+								result.remarksNuber = obj[i].remarksNuber;
+							}
+							result.LLNumber = result_1[0].LLNumber;
+							result.name = result_1[0].name;
+							result.msg = "成功";
+							resto.send(result);
+							arrayOne = 1;
+							break;
+						}
+					}
+					if(arrayOne == 0){
 						result.code = 200;
-						if(obj[i].remarksName){
-							result.remarksName = obj[i].remarksName;
-							result.remarksNameNick = result_1[0].nickName;
-						}else{
-							result.remarksName = result_1[0].nickName;
-							result.remarksNameNo = 'no';
-						}
-						if(obj[i].remarksNuber){
-							result.remarksNuber = obj[i].remarksNuber;
-						}else{
-							result.remarksNuber = obj[i].remarksNuber;
-						}
+						result.LLNumber = result_1[0].LLNumber;
 						result.name = result_1[0].name;
+						result.remarksName = result_1[0].nickName;
+						result.friend = 'no';
 						result.msg = "成功";
 						resto.send(result);
-						arrayOne = 1;
-						break;
+					}
+				}else{
+					if(star == 1){
+						resto.send(result);
+					}
+					if(star == 0){
+						star += 1;
+						remarksTo();
 					}
 				}
-				if(arrayOne == 0){
-					result.code = 200;
-					result.name = result_1[0].name;
-					result.remarksName = result_1[0].nickName;
-					result.friend = 'no';
-					result.msg = "成功";
-					resto.send(result);
-				}
-			}else{
-				resto.send(result);
-			}
-			db.close();
-		});
+				db.close();
+			});
+		}
+		remarksTo();
 	});
 })
 //更改个人资料

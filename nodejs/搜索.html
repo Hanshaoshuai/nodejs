@@ -20,7 +20,7 @@
 			<div class="searchBox home-search-go">
 				<font class="xiangmu-left"></font>
 				<div class="home-search">
-					<input placeholder="请输入聊聊号或或手机号" type="text" class="mint-field-core sousuo">
+					<input placeholder="请输入昵称、聊聊号或手机号" type="text" class="mint-field-core sousuo">
 				</div>
 				<span class="sousuoGo">搜索</span>
 			</div>
@@ -38,7 +38,7 @@
 							</div>
 							<div class="texts">
 								<span class="first"><i>名字</i><a></a></span>
-								<span class="lalst">聊聊号：<a>xxxx</a></span>
+								<span class="lalst lalst_center">聊聊号：<a>xxxx</a></span>
 								<span class="lalst lalst_name">昵称：<a></a></span>
 							</div>
 						</div>
@@ -132,14 +132,22 @@
 							toChatName = data.name;
 							window.localStorage.removeItem('remarksName');
 							window.localStorage.removeItem('remarksNuber');
+							$('.lalst_center a').text(data.LLNumber);
+							if(data.sex !== 'Sir'){
+								$('.texts .first a').attr({'class':'image'});
+							}else{
+								$('.texts .first a').attr({'class':''});
+							}
 							if(data.remarksNameNo == 'no'){
 								$('.texts .first i').text(data.remarksName);
 								$('.lalst_name a').text(data.remarksName);
 								window.localStorage.setItem('toNames',data.remarksName);
+								window.localStorage.setItem('nickName',data.remarksName);
 							}else{
 								$('.texts .first i').text(data.remarksName);
 								$('.lalst_name a').text(data.remarksNameNick);
 								window.localStorage.setItem('toNames',data.remarksName);
+								window.localStorage.setItem('nickName',data.remarksName);
 							}
 							if(data.remarksNuber){
 								$('.beiZhu').show().children('font').text(data.remarksNuber);
@@ -215,6 +223,7 @@
 						if(data.remarksName){
 							$('.texts .first i').text(data.remarksName);
 							window.localStorage.setItem('toNames',data.remarksName);
+							window.localStorage.setItem('nickName',data.remarksName);
 						}
 						if(data.remarksNuber){
 							$('.beiZhu').show().children('font').text(data.remarksNuber);
@@ -247,6 +256,9 @@
 			}
 		})
 		$('.denglu-food1').on('click',function(){
+			window.localStorage.setItem('headPortrait',Youimg);
+			window.localStorage.setItem('type','chat');
+			window.localStorage.setItem('toChatName',toChatName);
 			window.location.href = '聊天室.html';
 		});
 		$('.friends').on('click',function(){

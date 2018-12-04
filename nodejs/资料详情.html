@@ -47,7 +47,7 @@
 							</div>
 							<div class="texts">
 								<span class="first"><i>名字</i><a></a></span>
-								<span class="lalst">聊聊号：<a>xxxx</a></span>
+								<span class="lalst lalst_center">聊聊号：<a>xxxx</a></span>
 								<span class="lalst lalst_name">昵称：<a></a></span>
 							</div>
 						</div>
@@ -98,7 +98,8 @@
 	<script src="jquery.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
 		var lists = {},socket = io.connect('http://127.0.0.1:8080'),
-			image = {},
+			image = {},nickName = '',
+			fromType = window.localStorage.getItem('fromType'),
 			sexImage = window.localStorage.getItem('sex'),
 			Youimg = null,types = window.localStorage.getItem('type'),
 			toChatName = null,myName = null,addFriend = '';
@@ -129,6 +130,8 @@
 			if(toChatName_groupChatAll){
 				window.location.href = '所有成员.html';
 				window.localStorage.removeItem('toChatName_groupChatAll');
+			}else if(fromType == 'All'){
+				window.location.href = '聊天列表.html';
 			}else{
 				window.location.href = '聊天室.html';
 			}
@@ -143,6 +146,7 @@
 				if(data.code === 200){
 					window.localStorage.removeItem('remarksName');
 					window.localStorage.removeItem('remarksNuber');
+					$('.lalst_center a').text(data.LLNumber);
 					if(data.sex !== 'Sir'){
 						$('.texts .first a').attr({'class':'image'});
 					}else{
@@ -152,10 +156,12 @@
 						$('.texts .first i').text(data.remarksName);
 						$('.lalst_name a').text(data.remarksName);
 						window.localStorage.setItem('toNames',data.remarksName);
+						nickName = data.remarksName;
 					}else{
 						$('.texts .first i').text(data.remarksName);
 						$('.lalst_name a').text(data.remarksNameNick);
 						window.localStorage.setItem('toNames',data.remarksName);
+						nickName = data.remarksName;
 					}
 					if(data.remarksNuber){
 						$('.beiZhu').show().children('font').text(data.remarksNuber);
@@ -218,6 +224,7 @@
 						if(data.remarksName){
 							$('.texts .first i').text(data.remarksName);
 							window.localStorage.setItem('toNames',data.remarksName);
+//							window.localStorage.setItem('nickName',data.remarksName);
 						}
 						if(data.remarksNuber){
 							$('.beiZhu').show().children('font').text(data.remarksNuber);
@@ -250,6 +257,10 @@
 			}
 		})
 		$('.denglu-food1').on('click',function(){
+			window.localStorage.setItem('nickName',nickName);
+			window.localStorage.setItem('headPortrait',Youimg);
+			window.localStorage.setItem('type','chat');
+			window.localStorage.setItem('toChatName',toChatName);
 			window.location.href = '聊天室.html';
 		});
 		$('.friends').on('click',function(){

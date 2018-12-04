@@ -87,6 +87,103 @@
 				dom.append("<li style='height:36px;'>"+fromName+"在公告："+text+"</li>");
 			}
 		}
+		//过去式记录格式为：几时几分、超过24小时显示几月几日
+		function numToTime(num){
+			num = num*1;
+			if(num == ''){
+				return;
+			}
+			var newNum = new Date().getTime(),
+				time = new Date(num).toLocaleString(),
+				date = new Date(new Date()),
+				year,
+				mouth,
+				day,
+				h,
+				m,
+				newTime = new Date(newNum).toLocaleString(),
+				week = {
+					"0": "日",
+					"6": "一",
+					"5": "二",
+					"4": "三",
+					"3": "四",
+					"2": "五",
+					"1": "六"
+				},
+				getDays=new Date().getDate()*1;;
+	//        console.log(newNum)
+			time = time.replace(/\d+[\/\-]/, function(text){
+				year = text.match(/\d+/)[0];
+				return '';
+			});
+			time = time.replace(/\d+[\/\-]/, function(text){
+				mouth = text.match(/\d+/)[0];
+				return '';
+			});
+			time = time.replace(/\d+/, function(text){
+				day = text.match(/\d+/)[0];
+				return '';
+			});
+			time = time.replace(/\d+/, function(text){
+				h = text.match(/\d+/)[0];
+				return '';
+			});
+			time = time.replace(/\d+/, function(text){
+				m = text.match(/\d+/)[0];
+				return '';
+			});
+			num = (newNum - num) / 1000;
+			function getHours (){
+				if(/上午/.test(time)){
+					if(h == 12 || h < 5){
+						if(h == 12){
+							return '凌晨00' + ':'+ m;
+						}else{
+							return '凌晨0'+h.toString() + ':'+ m;
+						}
+						
+					}else if(h == 5){
+						return '清晨0'+h.toString() + ':'+ m;
+					}else if(h > 5 && h < 11){
+						if(h == 10){
+							return '早上'+ h.toString() + ':'+ m;
+						}else{
+							return '早上0'+h.toString() + ':'+ m;
+						}
+					}else if(h > 10 && h < 12){
+						return '中午'+h.toString() + ':'+ m;
+					}
+				} else {
+					if(h == 12 || h < 1){
+						if(h == 12){
+							return '中午'+h.toString() + ':'+ m;
+						}else{
+							return '中午'+(h*1+12).toString() + ':'+ m;
+						}
+						
+					}else if(h > 0 && h < 7){
+						return '下午'+(h*1+12).toString() + ':'+ m;
+					}else if(h > 6 && h < 12){
+						return '晚上'+(h*1+12).toString() + ':'+ m;
+					}
+				}
+			}
+	//        console.log('ooooooo====',date.getDay());
+			if(getDays == day*1){
+				return getHours();
+			}
+			if(getDays - day*1 == 1){
+				return '昨天&nbsp'+getHours();
+			}else if((getDays - day*1) > 1 && (getDays - day*1) < day*1){
+				// return '周' + week[getDays - day*1 + ""] + '&nbsp' + getHours();
+			}
+			if(year === newTime.match(/\d+/)[0]){
+				return mouth + '月' + day + '日&nbsp'+getHours();
+			} else {
+				return year + '年' + mouth + '月' + day + '日&nbsp'+getHours();
+			}
+		}
 		function getList(){
 			// 所有人员列表
 			$.ajax({
@@ -103,12 +200,13 @@
 							$('#gengduo').show();
 						}
 						var box = $('.box_list .fankiu');
-						var dom = '';
+						var dom = '',text = '',headPortrait = '';
 						console.log(box)
 // 						
 						for(var i=0; i<data.body.length; i++){
-							var text = "'"+data.body[i].nickName+"'";
-							dom += '<div class="content-food border-bottom" onClick="linkFriends('+text+','+data.body[i].name+')">'+
+							text = "'"+data.body[i].nickName+"'";
+							headPortrait = "'"+data.body[i].headPortrait+"'";
+							dom += '<div class="content-food border-bottom" onClick="linkFriends('+text+','+data.body[i].name+','+headPortrait+')">'+
 									'<div class="imgas">'+
 										'<p>'+
 											'<img class="border" src="'+data.body[i].headPortrait+'" alt="" />'+
@@ -133,15 +231,22 @@
 			// 获取更多联系人
 			getList();
 		});
-		function linkFriends(nickName,name){
+		function linkFriends(nickName,name,headPortrait){
 			console.log('添加好友验证消息',nickName,name);
-			var mymessage=confirm("是否添加"+nickName+"为好友？");
-			if(mymessage==true){
-				// alert("添加成功");
-				toAdd({'addName':nickName, 'fromNumber':localName,'addNumber':name.toString()});
-			}else{  
-				// alert("JS功能强大，要学习噢!");
-			}
+			window.localStorage.setItem('fromType','All');
+			window.localStorage.setItem('type','chat');
+			window.localStorage.setItem('headPortrait',headPortrait);
+			window.localStorage.setItem('toNames',name.toString());
+			window.localStorage.setItem('nickName',nickName);
+			window.localStorage.setItem('toChatName',name.toString());
+			window.location.href = '资料详情.html';
+// 			var mymessage=confirm("是否添加"+nickName+"为好友？");
+// 			if(mymessage==true){
+// 				// alert("添加成功");
+// 				toAdd({'addName':nickName, 'fromNumber':localName,'addNumber':name.toString()});
+// 			}else{  
+// 				// alert("JS功能强大，要学习噢!");
+// 			}
 		}
 		function toAdd(list){
 			//添加好友；
@@ -180,10 +285,6 @@
 				}
 			})
 		}
-		
-		
-		
-		
 		function getList1(location){
 			// 好友人员列表
 			$.ajax({
@@ -205,13 +306,14 @@
 						console.log(box);
 						for(var i=0; i<data.body.length; i++){
 							var text = "'no'",fromName = "'no'",toName = "'no'",newsNumber = '',friendName = '',toNames = '', headPortrait = '', chatRecord = '',toFriends = '',sex = '',
-							remarksName = '', myRegion = '';
+							remarksName = '', myRegion = '',remarksNuber = "'no'";
 							friendName = "'"+data.body[i].name+"'";
 							toNames = "'"+data.body[i].nickName+"'";
 							headPortrait = "'"+data.body[i].headPortrait+"'";
 							sex = "'"+data.body[i].sex+"'";
 							if(data.body[i].name == localName){
 								window.localStorage.setItem('mySex',data.body[i].sex);
+								window.localStorage.setItem('LLNumber',data.body[i].LLNumber);
 								if(data.body[i].myRegion){
 									window.localStorage.setItem('myRegion',data.body[i].myRegion);
 								}else{
@@ -224,17 +326,22 @@
 									fromName = "'"+data.body[i].linkFriends[e].fromName+"'";
 									toName = "'"+data.body[i].linkFriends[e].toName+"'";
 									newsNumber = data.body[i].linkFriends[e].newsNumber;
+									remarksNuber = data.body[i].linkFriends[e].remarksNuber;
 									if(data.body[i].linkFriends[e].remarksName){
 										remarksName = data.body[i].linkFriends[e].remarksName;
 									}
 									if(data.body[i].linkFriends[e].chatRecord.addName){
-										chatRecord = "来自"+data.body[i].linkFriends[e].toName+'好友请求！'
+										chatRecord = "来自"+data.body[i].linkFriends[e].toName+'好友验证请求！'
 									}else{
 										if(data.body[i].linkFriends[e].chatRecord.friends == 'yes'){
-											chatRecord = data.body[i].linkFriends[e].chatRecord.text;
+											if(data.body[i].linkFriends[e].chatRecord.from == localName){
+												chatRecord = '你通过了对方的好友验证请求，现在可以开始聊天啦😄';
+											}else{
+												chatRecord = data.body[i].linkFriends[e].chatRecord.text;
+											}
 										}else{
 											if(data.body[i].linkFriends[e].chatRecord.friends == 'no'){
-												chatRecord = '对方拒绝了您的好友请求！';
+												chatRecord = '对方拒绝了您的好友验证请求！';
 												toFriends = "'no'";
 											}else{
 												chatRecord = data.body[i].linkFriends[e].chatRecord;
@@ -252,24 +359,24 @@
 //										remarksName = "'"+data.body[i].linkFriends[e].remarksName+"'";
 										if(data.body[i].linkFriends[e].toName == ''){
 											if(data.body[i].linkFriends[e].chatRecord.addName){
-												chatRecord = "对方还未添加您为好友！请耐心等待...";
+												chatRecord = "您向对方发送了好友验证请求！请耐心等待...";
 											}else{
 												if(data.body[i].linkFriends[e].adopt == ''){
 													text = "'yes'";
 													toFriends = "'no'";
-													chatRecord = '对方拒绝了您的好友请求！';
+													chatRecord = '对方拒绝了您的好友验证请求！';
 												}else{
 													chatRecord = data.body[i].linkFriends[e].chatRecord;
 												}
 											}
 										}else{
 											if(data.body[i].linkFriends[e].chatRecord.addName){
-												chatRecord = "来自"+data.body[i].linkFriends[e].toName+'的好友请求！'
+												chatRecord = "来自"+data.body[i].linkFriends[e].toName+'的好友验证请求！'
 											}else{
 												if(data.body[i].linkFriends[e].adopt == ''){
 													text = "'yes'";
 													toFriends = "'no'";
-													chatRecord = '您拒绝了对方的好友请求！';
+													chatRecord = '您拒绝了对方的好友验证请求！';
 												}else{
 													chatRecord = data.body[i].linkFriends[e].chatRecord;
 												}
@@ -322,7 +429,7 @@
 									}
 								}
 							}
-							dom += '<div class="content-food border-bottom" onClick="toChat('+textName+','+groupOwner+','+localNumber+','+nickNameGrou+','+nickName1+','+text+','+fromName+','+toName+','+friendName+','+toNames+','+headPortrait+','+sex+','+toFriends+')">'+
+							dom += '<div class="content-food border-bottom" onClick="toChat('+remarksNuber+','+textName+','+groupOwner+','+localNumber+','+nickNameGrou+','+nickName1+','+text+','+fromName+','+toName+','+friendName+','+toNames+','+headPortrait+','+sex+','+toFriends+')">'+
 									'<div class="imgas">'+
 										'<p style="display:'+imga_first+'">'+
 											'<img class="border" src="'+data.body[i].headPortrait+'" alt="" />'+
@@ -344,6 +451,7 @@
 										'<span class="first">'+nickName+'</span>'+
 										'<span class="lalst">'+chatRecord+'</span>'+
 									'</div>'+
+									'<div class="times">'+numToTime(data.body[i].dateTime)+'</div>'+
 								'</div>'
 						}
 						box.append(dom);
@@ -357,7 +465,7 @@
 				}
 			})
 		}
-		function claerNumeber(textName,groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends){
+		function claerNumeber(remarksNuber,textName,groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends,show){
 			// 消息清零
 			window.localStorage.setItem('type','chat');
 			window.localStorage.setItem('toChatName',friendName);
@@ -367,34 +475,37 @@
 			window.localStorage.setItem('headPortrait',headPortrait);
 			window.localStorage.setItem('sex',sex);
 			getList1('location');
-			$.ajax({
-				type:'post',
-				url:'http://127.0.0.1:8080/post6',
-				data:{'fromName':friendName,'myName':localName,'clear':'ok','friends':toFriends},
-				success:function(data){
-					console.log(data);
-					if(data.code == 200 ){
-						// alert(data.msg);
+			if(!show){
+				$.ajax({
+					type:'post',
+					url:'http://127.0.0.1:8080/post6',
+					data:{'fromName':friendName,'myName':localName,'clear':'ok','friends':toFriends},
+					success:function(data){
+						console.log(data);
+						if(data.code == 200){
+							// alert(data.msg);
+						}
+					},
+					error:function(){
+						console.log('error');
 					}
-				},
-				error:function(){
-					console.log('error');
-				}
-			})
+				})
+			}
 		}
-		function toChat(textName,groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends){
+		function toChat(remarksNuber,textName,groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends){
+			console.log(remarksNuber);
 //			console.log(groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends);
 			window.localStorage.setItem('textName',textName);
+			window.localStorage.setItem('remarksNuber',remarksNuber);
 			if(text == 'yes'){
 				console.log(toName)
-				claerNumeber(textName,groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends);
+				claerNumeber(remarksNuber,textName,groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends);
 			}else{
-				
 				if(text == 'no' && fromName != localName){
 					console.log('jkjjjj',toNames.split(',').length);
 					if(toNames.split(',').length < 2){
 						console.log('jkjjjj',toNames);
-						claerNumeber(textName,groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends);
+						claerNumeber(remarksNuber,textName,groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends);
 						return;
 					}
 					// console.log(friendName,toNames);
@@ -437,10 +548,13 @@
 					
 					
 				}else if(fromName != '' && fromName == localName){
-					var mymessage=confirm('对方还没有添加你为好友！请耐心等待。');
-					if(mymessage==true){
-						
-					}else{}
+					console.log(toNames)
+					// getList1('location');
+					claerNumeber(remarksNuber,textName,groupOwner,localNumber,nickNameGrou,nickName1,text,fromName,toName,friendName,toNames,headPortrait,sex,toFriends,'no');
+// 					var mymessage=confirm('对方还没有添加你为好友！请耐心等待。');
+// 					if(mymessage==true){
+// 						
+// 					}else{}
 				}
 			}
 		}
@@ -450,15 +564,23 @@
 		})
 		function tupian(){
 			var x = 0,y = 0;
+			if(window.localStorage.getItem('fromType')){
+				getList();
+				$('.box_list').show();
+				$('.xiangmu-left').hide();
+				$('.xiangmu-left-go').show();
+			}
 			$(document).on('click',function(e){
 //				console.log(e)
-				if (!$(e.target).closest(".xiangmu-rigth,.xiangmu-rigth").length) {
+				if (!$(e.target).closest(".xiangmu-rigth,.xiangmu-rigth,.box_list").length) {
 			        $('.xiangmu-header ul').hide().removeAttr('class');
+							window.localStorage.removeItem('fromType');
 			   }
 			})
 			$('.xiangmu-rigth').on('click',function(){
 				if($('.xiangmu-header ul').attr('class')){
 					$('.xiangmu-header ul').hide().removeAttr('class');
+					window.localStorage.removeItem('fromType');
 				}else{
 					$('.xiangmu-header ul').show().attr({'class':'show'});
 				}
