@@ -1130,6 +1130,7 @@ app.post("/post6",function(req,res,next){
 //消息累计
 function creatNameber(obj,socket){
 	console.log('消息累计',obj);
+	var dateTime = parseInt(Date.parse(new Date())).toString();
 	if(obj.type == 'groupChat'){
 		console.log('群聊')
 		MongoClient.connect(url, function(err, db) {
@@ -1139,7 +1140,7 @@ function creatNameber(obj,socket){
 				if (err) throw err;
 				if(result_1[0]){
 					console.log("数据：",result_1[0]);
-					var dateTime = parseInt(Date.parse(new Date())).toString();
+//					var dateTime = parseInt(Date.parse(new Date())).toString();
 					for(var i=0; i<result_1[0].name.length; i++){
 						if(result_1[0].name[i].name != obj.fromName){
 							result_1[0].name[i].newsNumber += 1;
@@ -1180,7 +1181,7 @@ function creatNameber(obj,socket){
 							objs[i].newsNumber = objs[i].newsNumber*1+1;
 							objs[i].dateTime = parseInt(Date.parse(new Date())).toString();
 							objs[i].chatRecord = obj.text;
-							var dateTime = parseInt(Date.parse(new Date())).toString();
+//							var dateTime = parseInt(Date.parse(new Date())).toString();
 							console.log('消息累计返回符合非共和国',objs);
 							MongoClient.connect(url, function(err, db) {
 								var dbo = db.db("runoob");
@@ -1215,12 +1216,12 @@ function creatNameber(obj,socket){
 					for(var i=0; i<objs.length; i++){
 						if(objs[i].friendName == obj.fromName){
 							objs[i].chatRecord = obj.text;
-							var dateTime = parseInt(Date.parse(new Date())).toString();
+//							var dateTime = parseInt(Date.parse(new Date())).toString();
 							console.log('消息累计返回符合非共和国',objs);
 							MongoClient.connect(url, function(err, db) {
 								var dbo = db.db("runoob");
 								var whereStr = {'name':obj.toName};  // 查询条件
-								var updateStr = {$set: { "linkFriends" : objs, }};//更换内容
+								var updateStr = {$set: { "linkFriends" : objs, 'dateTime':dateTime }};//更换内容
 								console.log('第2道',updateStr);
 								dbo.collection("site").updateOne(whereStr, updateStr, function(err, res) {
 									if (err) throw err;
@@ -1559,7 +1560,16 @@ io.sockets.on('connection', function(socket) { //此处每个回调socket就是�
 	//socket.broadcast用于向整个网络广播(除自己之外)
 	// 监听客户端发送的消息
 	socket.on('clientmessage', function(data) {
-		console.log('clientmessagkkkkkkkkkkkkkkkkkkkkk',data);
+//		console.log('clientmessagkkkkkkkkkkkkkkkkkkkkk',data);
+		if(data.toDataURL){
+			socket.broadcast.emit('message', {
+				text: data
+			});
+			socket.emit('message', {
+				text: data
+			});
+			return;
+		}
 		if(Array.isArray(data.toName)){
 			data.type = 'groupChat';
 		}else{

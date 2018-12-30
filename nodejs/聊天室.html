@@ -722,14 +722,7 @@
 							if(data.text.text_last){
 								return;
 							}
-							if(data.text.type == "groupChat"){
-								var settime = setTimeout(function(){
-									that.clearNumber(data.text.fromName,data.text.toName,'groupChat',nickNameTop);
-									clearTimeout(settime);
-								},200);
-							}
 							that.FasongShijian();
-							
 							if(data.text.text.friends == 'yes'){
 								that.TishiNeirong('你通过了对方的好友验证请求，现在可以开始聊天啦😄');
 //								that.TishiNeirong(data.text.text.text);
@@ -780,12 +773,13 @@
 							if(data.text.text_first){
 								that.TishiNeirong(data.text.text);
 							}else{
-								that.You('yes','yes',data.text.text,data.text.fromName,data.text.text_first);
+//								that.You('yes','yes',data.text.text,data.text.fromName,data.text.text_first);
+								that.You('yes','yes',data.text.text,data.text.fromName,data.text.myIconName);
+								var settime = setTimeout(function(){
+									that.clearNumber(myLocName,window.localStorage.getItem('toChatName'),'groupChat',nickNameTop);
+									clearTimeout(settime);
+								},200);
 							}
-							var settime = setTimeout(function(){
-								that.clearNumber(data.text.fromName,data.text.toName);
-								clearTimeout(settime);
-							},200);
 						}
 						if(data.text.toName === '' && (data.text.fromName !== myLocName)){
 							console.log('444-',data.text);
