@@ -2,6 +2,22 @@
 // mongo
 // nodemon
 
+//查看所用已启动项目：
+//
+//pm2 list
+//
+//重启：
+//
+//pm2 restart XXX
+//
+//停止：
+//
+//pm2 stop XXX
+//
+//删除
+//
+//pm2 delete XXX
+
 var express = require("express");
 var bodyParser = require("body-parser");
 var fs = require("fs");
@@ -1306,7 +1322,7 @@ app.post('/remarks', function (req, res) {
 })
 //资料详情
 app.post('/remarks1', function (req, res) {
-	console.log(req.body);  // 上传的文件信息
+	console.log(req1.body);  // 上传的文件信息
 	var resto= res,
 		reqs = req,
 		result = {'code':1001,'msg':"未搜到结果哦！",'icon':''};

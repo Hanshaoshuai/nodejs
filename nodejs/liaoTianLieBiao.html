@@ -239,7 +239,7 @@
 			window.localStorage.setItem('toNames',name.toString());
 			window.localStorage.setItem('nickName',nickName);
 			window.localStorage.setItem('toChatName',name.toString());
-			window.location.href = '资料详情.html';
+			window.location.href = 'ziLiaoXiangQing.html';
 // 			var mymessage=confirm("是否添加"+nickName+"为好友？");
 // 			if(mymessage==true){
 // 				// alert("添加成功");
@@ -456,7 +456,7 @@
 						}
 						box.append(dom);
 						if(location){
-							window.location.href = '聊天室.html';
+							window.location.href = 'liaoTianShi.html';
 						}
 					}
 				},
@@ -560,7 +560,7 @@
 		}
 		
 		$('.xiangmu-left').on('click',function(){
-			window.location.href = '个人资料.html';
+			window.location.href = 'geRenZiLiao.html';
 		})
 		function tupian(){
 			var x = 0,y = 0;
@@ -614,11 +614,11 @@
 				}else if(this.innerText == '发起群聊'){
 					console.log(this.innerText);
 					$('.xiangmu-header ul').hide().removeAttr('class');
-					window.location.href = '建群页面.html';
+					window.location.href = 'jianQun.html';
 				}else if(this.innerText == '添加好友'){
 					console.log(this.innerText);
 					$('.xiangmu-header ul').hide().removeAttr('class');
-					window.location.href = '搜索.html';
+					window.location.href = 'souSuo.html';
 				}else if(this.innerText == '扫一扫'){
 					console.log(this.innerText);
 					$('.xiangmu-header ul').hide().removeAttr('class');
