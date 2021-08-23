@@ -1322,7 +1322,7 @@ app.post('/remarks', function (req, res) {
 })
 //资料详情
 app.post('/remarks1', function (req, res) {
-	console.log(req1.body);  // 上传的文件信息
+	console.log(req.body);  // 上传的文件信息
 	var resto= res,
 		reqs = req,
 		result = {'code':1001,'msg':"未搜到结果哦！",'icon':''};

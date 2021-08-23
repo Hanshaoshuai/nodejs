@@ -1,0 +1,1 @@
+[{"fromName":"18310998371","toName":[{"name":"18310998377","newsNumber":0},{"name":"18310998379","newsNumber":0},{"name":"18310998371","newsNumber":0}],"text":"哈喽","fromTo":"一起了NaN","nickName":"一起了","dateTimes":"yes","myIconName":"FFF","type":"groupChat","dateTime":1626263584000}]

@@ -4,8 +4,7 @@
 	    <meta charset="UTF-8">
 	    <title>交流列表</title>
 		<!-- <script src="routes/index.js" type="text/javascript" charset="utf-8"></script> -->
-	    <script type="text/javascript" src="jquery.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js" type="text/javascript" charset="utf-8"></script>
+	    
 		<link rel="stylesheet" type="text/css" href="css/record.css"/>
 		<link rel="stylesheet" type="text/css" href="css/index.css" />
 		<script>
@@ -48,6 +47,8 @@
 			</div>
 		</div>
 	</body>
+	<script type="text/javascript" src="jquery.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
 		var listName = [],page = 1,pageSize = 20,socket = io.connect('http://127.0.0.1:8080'),imgIdLoc = [],groupNameLoc = [],
 		localName = window.localStorage.getItem('name');

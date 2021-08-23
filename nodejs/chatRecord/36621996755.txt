@@ -1,1 +1,0 @@
-[{"fromName":"18310998379","toName":"18310998376","text":{"friend":"no","addName":"rr"},"type":"chat","dateTime":1543800920000,"friend":"yes"},{"fromName":"18310998376","toName":"18310998379","text":{"from":"18310998376","text":"你们已成为好友可以继续聊天啦！😄","friends":"yes"},"dateTimes":"no","type":"chat","dateTime":1543801008000}]
