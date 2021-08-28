@@ -1,0 +1,1 @@
+[{"fromName":"18310998373","toName":"18310998379","text":{"friend":"no","addName":"han"},"type":"chat","dateTime":1630061768000,"friend":"yes"},{"fromName":"18310998379","toName":"18310998373","text":{"from":"18310998379","text":"我通过了你的好友验证请求，我们现在可以聊天啦！😄","friends":"yes"},"dateTimes":"yes","type":"chat","dateTime":1630132142000}]

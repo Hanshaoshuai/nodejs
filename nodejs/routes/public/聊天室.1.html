@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>聊天室</title>
+    <!-- <script src="routes/index.js" type="text/javascript" charset="utf-8"></script> -->
+    <style type="text/css">
+      #zhuce {
+        display: none;
+      }
+      /* #btn{display: none;} */
+      #list_test {
+        width: 500px;
+        height: 200px;
+        overflow-y: auto;
+        border: 1px solid #0062cc;
+        padding: 10px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="btn">
+        <label>
+          <img src="" alt="" id="img" />
+          <input type="file" name="" id="button" value="点击我" />上传头像<span
+            id="button1"
+            >----更换头像</span
+          >
+        </label>
+      </div>
+      <div class="text">
+        <form
+          action="http://127.0.0.1:8080/post"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <input id="name" type="text" name="image" />用户名
+          <input id="password" type="text" name="image" />密码
+          <br />
+          <!-- <input id='submit' type="submit" value="登录" /> -->
+          <input id="submit" type="button" value="登录" />
+          <input id="submit3" type="button" value="退出登录" />
+          <input id="submit2" type="button" value="注销" />
+        </form>
+      </div>
+      <div id="zhuce">
+        <input id="name1" type="text" name="image" />设置用户名
+        <input id="password1" type="text" name="image" />设置密码
+        <br />
+        <input id="submit1" type="button" value="提交" />
+      </div>
+    </div>
+    <div id="list_test">
+      <p></p>
+    </div>
+    <div
+      id="gengduo"
+      style="
+        width: 120px;
+        height: 30px;
+        margin-left: 200px;
+        border: 1px #007aff solid;
+        text-align: center;
+        line-height: 30px;
+      "
+    >
+      获取更多数据
+    </div>
+    <br />
+    <input id="texts0" type="text" />发送人
+    <input id="texts" type="text" />输入内容
+    <button id="btns">发送消息</button>
+    <button id="leaveBtn">离开</button>
+  </body>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js"
+    type="text/javascript"
+    charset="utf-8"
+  ></script>
+  <script src="../../jquery.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript">
+    var socket = io.connect('http://127.0.0.1:8080'),
+      lists = {},
+      image = {};
+    //登录
+    $('#submit').on('click', function () {
+      // 			if(window.localStorage.getItem('name') && (window.localStorage.getItem('name') !== '')){
+      // 				alert('你已是登录状态请先退出登录');
+      // 				return;
+      // 			}
+      lists.name = $('#name')[0].value;
+      lists.password = $('#password')[0].value;
+      console.log(lists);
+      if (lists.name === '') {
+        alert('请输入用户名');
+        return;
+      }
+      if (lists.password === '') {
+        alert('请输入用户密码');
+        return;
+      }
+      $.ajax({
+        type: 'post',
+        url: 'http://127.0.0.1:8080/post',
+        data: lists,
+        success: function (data) {
+          console.log(data);
+          if (data.code === 1001) {
+            //"用户名或密码错误"
+            alert(data.msg);
+          } else if (data.code === 200) {
+            $('#zhuce').css({ display: 'none' });
+            window.localStorage.setItem('name', lists.name);
+            window.localStorage.setItem('imgId', data.imgId);
+            tupian();
+            window.location.reload();
+            alert(data.msg);
+          } else if (data.code === 2001) {
+            //用户不存在请先注册
+            alert(data.msg);
+            $('#name1')[0].value = lists.name;
+            $('#password1')[0].value = lists.password;
+            $('#zhuce').css({ display: 'block' });
+          }
+        },
+        error: function () {
+          console.log('error');
+        },
+      });
+    });
+    //注册
+    $('#submit1').on('click', function () {
+      lists.name = $('#name1')[0].value;
+      lists.password = $('#password1')[0].value;
+      lists.imgId = window.localStorage.getItem('imgId');
+      console.log(lists);
+      if (lists.name === '') {
+        alert('请输入用户名');
+        return;
+      }
+      if (lists.password === '') {
+        alert('请输入用户密码');
+        return;
+      }
+      if ($('#button')[0].value === '') {
+        alert('请上传你的头像');
+        return;
+      }
+      $.ajax({
+        type: 'post',
+        url: 'http://127.0.0.1:8080/post1',
+        data: lists,
+        success: function (data) {
+          console.log(data);
+          if ((data.code = 200)) {
+            alert(data.msg);
+            $('#zhuce').css({ display: 'none' });
+          }
+        },
+        error: function () {
+          console.log('error');
+        },
+      });
+    });
+    //退出登录
+    $('#submit3').on('click', function () {
+      lists.name = window.localStorage.getItem('name');
+      console.log(lists);
+      $.ajax({
+        type: 'post',
+        url: 'http://127.0.0.1:8080/post3',
+        data: lists,
+        success: function (data) {
+          console.log(data);
+          if ((data.code = 200)) {
+            if ((data.code = 200)) {
+              alert(data.msg);
+              socket.emit('leave', 'leave');
+              // $('#btn').css({'display':'none'});
+              window.localStorage.setItem('name', '');
+              window.localStorage.setItem('imgId', '');
+              $('#list_test').html('');
+              window.location.reload();
+            } else if ((data.code = 1001)) {
+              alert(data.msg);
+            }
+          }
+        },
+        error: function () {
+          console.log('error');
+        },
+      });
+    });
+    //注销
+    $('#submit2').on('click', function () {
+      lists.name = window.localStorage.getItem('name');
+      lists.password = $('#password')[0].value;
+      console.log(lists);
+      $.ajax({
+        type: 'post',
+        url: 'http://127.0.0.1:8080/post2',
+        data: lists,
+        success: function (data) {
+          console.log(data);
+          if (data.code == 200) {
+            alert(data.msg);
+            $('#btn').css({ display: 'none' });
+            window.localStorage.setItem('name', '');
+            window.localStorage.setItem('imgId', '');
+            tupian();
+            window.location.reload();
+          } else if (data.code == 1001) {
+            alert(data.msg);
+          }
+        },
+        error: function () {
+          console.log('error');
+        },
+      });
+    });
+    function clearNumber(fromName, toName) {
+      // 消息清零
+      $.ajax({
+        type: 'post',
+        url: 'http://127.0.0.1:8080/post6',
+        data: { fromName: fromName, myName: toName, clear: 'ok' },
+        success: function (data) {
+          console.log(data);
+          if (data.code == 200) {
+            alert(data.msg);
+            // getList1('location');
+            // window.localStorage.setItem('toChatName',friendName);
+          }
+        },
+        error: function () {
+          console.log('error');
+        },
+      });
+    }
+    var leave = document.getElementById('leaveBtn');
+
+    function socketIo() {
+      //消息监听
+      socket.on('message', function (data) {
+        if (data.text) {
+          var dom = $('#list_test');
+          if (
+            data.text.fromName === window.localStorage.getItem('name') &&
+            data.text.toName !== ''
+          ) {
+            console.log('111-', data.text);
+            dom.append(
+              "<li style='height:36px;text-align:center;width:100%;color:red;'>时间" +
+                data.text.dateTime +
+                '</li>'
+            );
+            dom.append(
+              "<li style='height:36px;text-align:right;width:100%;'>" +
+                data.text.text +
+                '</li>'
+            );
+          } else if (data.text.toName === window.localStorage.getItem('name')) {
+            console.log('222-', data.text);
+            dom.append(
+              "<li style='height:36px;text-align:center;width:100%;color:red;'>时间" +
+                data.text.dateTime +
+                '</li>'
+            );
+            dom.append("<li style='height:36px;'>" + data.text.text + '</li>');
+            setTimeout(function () {
+              clearNumber(data.text.fromName, data.text.toName);
+            }, 200);
+          } else if (
+            data.text.toName === '' &&
+            data.text.fromName === window.localStorage.getItem('name')
+          ) {
+            console.log('333-', data.text);
+            dom.append(
+              "<li style='height:36px;text-align:center;width:100%;color:red;'>时间" +
+                data.text.dateTime +
+                '</li>'
+            );
+            dom.append(
+              "<li style='height:36px;text-align:right;width:100%;'>" +
+                data.text.fromName +
+                '在公告：' +
+                data.text.text +
+                '</li>'
+            );
+          }
+          if (
+            data.text.toName === '' &&
+            data.text.fromName !== window.localStorage.getItem('name')
+          ) {
+            console.log('444-', data.text);
+            toDom(data.text.fromName, data.text.text, data.text.dateTime);
+          }
+          var el_height = dom[0].scrollHeight; //   ===>  获得滚动条的高度
+          dom.scrollTop(el_height); //  ===> 设置滚动条的位置，滚动到底部
+        }
+      });
+      //填充对方的对话框
+      function toDom(fromName, text, dateTime) {
+        var dom = $('#list_test');
+        dom.append(
+          "<li style='height:36px;text-align:center;width:100%;color:red;'>时间" +
+            dateTime +
+            '</li>'
+        );
+        dom.append(
+          "<li style='height:36px;'>" + fromName + '在公告：' + text + '</li>'
+        );
+        var el_height = dom[0].scrollHeight; //   ===>  获得滚动条的高度
+        dom.scrollTop(el_height); //  ===> 设置滚动条的位置，滚动到底部
+      }
+      //发送消息
+      $('#btns').click(function () {
+        socket.emit('clientmessage', {
+          fromName: window.localStorage.getItem('name'),
+          // toName: $('#texts0')[0].value,
+          toName: window.localStorage.getItem('toChatName'),
+          text: $('#texts')[0].value,
+        });
+      });
+      //离线监听
+      leave.onclick = function () {
+        window.location.href = 'https://www.baidu.com/';
+        window.close();
+        // 				socket.emit('clientmessage', {
+        // 					text: window.localStorage.getItem('name')+'离开了'
+        // 				});
+      };
+    }
+    $('#gengduo').on('click', function () {
+      getList('types');
+    });
+    var page = 1,
+      pageSize = 10;
+    function getList(types) {
+      $.ajax({
+        type: 'get',
+        url: 'http://127.0.0.1:8080/get1',
+        data: { type: 'chat', page: page, pageSize: pageSize },
+        success: function (data) {
+          console.log(data);
+          if ((data.code = 200)) {
+            var dom0 = $('#list_test');
+            var dom;
+            if ($('#list_test').find('li').eq(0).length !== 0) {
+              dom = dom0.find('li').eq(0);
+            } else {
+              dom = dom0.find('p');
+            }
+            console.log(dom);
+            for (var i = 0; i < data.body.length; i++) {
+              if (
+                data.body[i].fromName === window.localStorage.getItem('name') &&
+                data.body[i].toName !== ''
+              ) {
+                dom.before(
+                  "<li style='height:36px;text-align:center;width:100%;color:red;'>时间" +
+                    data.body[i].dateTime +
+                    '</li>'
+                );
+                dom.before(
+                  "<li style='height:36px;text-align:right;width:100%;'>" +
+                    data.body[i].text +
+                    '</li>'
+                );
+              } else if (
+                data.body[i].toName === '' &&
+                data.body[i].fromName === window.localStorage.getItem('name')
+              ) {
+                dom.before(
+                  "<li style='height:36px;text-align:center;width:100%;color:red;'>时间" +
+                    data.body[i].dateTime +
+                    '</li>'
+                );
+                dom.before(
+                  "<li style='height:36px;text-align:right;width:100%;'>" +
+                    data.body[i].fromName +
+                    '在公告：' +
+                    data.body[i].text +
+                    '</li>'
+                );
+              } else if (
+                data.body[i].toName === '' &&
+                data.body[i].fromName !== window.localStorage.getItem('name')
+              ) {
+                dom.before(
+                  "<li style='height:36px;text-align:center;width:100%;color:red;'>时间" +
+                    data.body[i].dateTime +
+                    '</li>'
+                );
+                dom.before(
+                  "<li style='height:36px;'>" +
+                    data.body[i].fromName +
+                    '在公告：' +
+                    data.body[i].text +
+                    '</li>'
+                );
+              } else if (
+                data.body[i].toName === window.localStorage.getItem('name')
+              ) {
+                dom.before(
+                  "<li style='height:36px;text-align:center;width:100%;color:red;'>时间" +
+                    data.body[i].dateTime +
+                    '</li>'
+                );
+                dom.before(
+                  "<li style='height:36px;'>" + data.body[i].text + '</li>'
+                );
+              }
+            }
+            if (types) {
+              dom0.scrollTop(0);
+            } else {
+              var el_height = dom0[0].scrollHeight; //   ===>  获得滚动条的高度
+              dom0.scrollTop(el_height); //  ===> 设置滚动条的位置，滚动到底部
+            }
+          }
+          page += 1;
+        },
+        error: function () {
+          console.log('error');
+        },
+      });
+    }
+    function tupian() {
+      // 			$.ajax({
+      // 				type:'POST',
+      // 				url:'http://127.0.0.1:8080/post0',
+      // 				data:{'name':window.localStorage.getItem('name')},
+      // 				success:function(data){
+      // 					console.log(data);
+      // if(data.code = 200){
+      if (
+        window.localStorage.getItem('name') &&
+        window.localStorage.getItem('name') !== ''
+      ) {
+        var list = { imgId: window.localStorage.getItem('imgId') };
+        list.id = window.localStorage.getItem('name');
+        $('#btn').css({ display: 'block' });
+        $.ajax({
+          type: 'get',
+          url: 'http://127.0.0.1:8080/get',
+          data: list,
+          success: function (data) {
+            console.log(data);
+            if (data.code == 200) {
+              $('#img').attr('src', data.body[0].classIcon);
+              socketIo();
+            }
+          },
+          error: function () {
+            console.log('error');
+          },
+        });
+        getList();
+      }
+      // }
+      // },
+      // 				error:function(){
+      // 					console.log('error');
+      // 				}
+      // 			})
+    }
+    //上传图片
+    (function getText() {
+      tupian();
+      var imgId = '';
+      $('#button1').on('click', function () {
+        console.log(this);
+        if (window.localStorage.getItem('imgId')) {
+          imgId = window.localStorage.getItem('imgId');
+        }
+      });
+      $('#button').on('change', function () {
+        var AllowImgFileSize = 2100000; //上传图片最大值(单位字节)（ 2 M = 2097152 B ）超过2M上传失败
+        var reader = new FileReader();
+        var formDate = new FormData();
+        var file = $('#button')[0].files[0];
+        var imgUrlBase64 = reader.readAsDataURL(file);
+        reader.onload = function (e) {
+          //var ImgFileSize = reader.result.substring(reader.result.indexOf(",") + 1).length;//截取base64码部分（可选可不选，需要与后台沟通）
+          if (
+            AllowImgFileSize != 0 &&
+            AllowImgFileSize < reader.result.length
+          ) {
+            alert('上传失败，请上传不大于2M的图片！');
+            return;
+          } else {
+            //执行上传操作
+            // alert(reader.result);
+            // console.log(reader.result);
+            formDate.append('classIcon', reader.result);
+            formDate.append('name', 'imge');
+            formDate.append('imgId', imgId);
+            // image.url = reader.result;
+            console.log(formDate);
+            $.ajax({
+              type: 'POST',
+              url: 'http://127.0.0.1:8080/file_upload',
+              data: formDate,
+              cache: false,
+              processData: false,
+              contentType: false,
+              success: function (data) {
+                console.log(data);
+                window.localStorage.setItem('imgId', data.id);
+                $('#img').attr('src', data.icon);
+              },
+              error: function () {
+                console.log('error');
+              },
+            });
+          }
+        };
+        console.log(file);
+      });
+    })();
+  </script>
+</html>

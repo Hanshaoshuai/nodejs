@@ -1,0 +1,1 @@
+[{"fromName":"18310998378","toName":"18310998375","text":{"friend":"no","addName":"AAA"},"type":"chat","dateTime":1630056111000}]

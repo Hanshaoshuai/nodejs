@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>资料详情</title>
+    <!-- <script src="routes/index.js" type="text/javascript" charset="utf-8"></script> -->
+    <link rel="stylesheet" type="text/css" href="css/record.css" />
+    <link rel="stylesheet" type="text/css" href="css/ziLiaoXiangQing.css" />
+  </head>
+  <body>
+    <div class="denglu">
+      <div class="searchBox">
+        <div class="home-search">
+          <font class="xiangmu-left"></font>
+          <span>所有成员</span>
+        </div>
+      </div>
+      <div class="contents contents_search_leng">
+        <div class="denglu-text ziZhu">
+          <div class="xiangCe">
+            <div class="font_list"><span></span><font></font></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="index.js" type="text/javascript" charset="utf-8"></script>
+  <script src="jquery.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript">
+    var lists = {},
+      image = {},
+      sexImage = window.localStorage.getItem('sex'),
+      Youimg = null,
+      types = window.localStorage.getItem('type'),
+      imgIdLoc = JSON.parse(window.localStorage.getItem('imgIdLoc')),
+      toChatName = null,
+      myName = null,
+      addFriend = '',
+      sousuo = null;
+    if (types == 'groupChat') {
+      toChatName = window.localStorage.getItem('toChatName_groupChat');
+      myName = window.localStorage.getItem('name');
+      Youimg = window.localStorage.getItem('headPortrait_groupChat');
+      toNames = window.localStorage.getItem('groupOwner');
+    } else {
+      toChatName = window.localStorage.getItem('toChatName');
+      myName = window.localStorage.getItem('name');
+      Youimg = window.localStorage.getItem('headPortrait');
+      toNames = window.localStorage.getItem('toNames');
+    }
+
+    $('.xiangmu-left').on('click', function () {
+      window.location.href = 'liaoTianShi.html';
+    });
+    console.log(imgIdLoc);
+    var html_dom = '',
+      classIcon = "'no'",
+      name = "'no'";
+    for (var i = 0; i < imgIdLoc.length; i++) {
+      classIcon = "'" + imgIdLoc[i].classIcon + "'";
+      name = "'" + imgIdLoc[i].name + "'";
+      html_dom +=
+        '<div class="font_list" onClick="toChat(' +
+        classIcon +
+        ',' +
+        name +
+        ')">' +
+        '<img class="border" src="' +
+        imgIdLoc[i].classIcon +
+        '" alt="" /><font>' +
+        imgIdLoc[i].nickName +
+        '</font>' +
+        '</div>';
+    }
+    $('.xiangCe').html(html_dom);
+    function toChat(classIcon, name) {
+      console.log(classIcon, name);
+      window.localStorage.setItem('headPortrait_groupChat', classIcon);
+      window.localStorage.setItem('toChatName_groupChat', name);
+      window.localStorage.setItem('toChatName_groupChatAll', '来自所有成员');
+      window.location.href = 'ziLiaoXiangQing.html';
+    }
+  </script>
+</html>

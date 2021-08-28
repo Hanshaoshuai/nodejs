@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>资料详情</title>
+    <!-- <script src="routes/index.js" type="text/javascript" charset="utf-8"></script> -->
+    <link rel="stylesheet" type="text/css" href="css/record.css" />
+    <link rel="stylesheet" type="text/css" href="css/ziLiaoXiangQing.css" />
+  </head>
+  <body>
+    <div class="denglu">
+      <div class="searchBox home-search-go">
+        <font class="xiangmu-left"></font>
+        <div class="home-search">
+          <input
+            placeholder="请输入昵称、聊聊号或手机号"
+            type="text"
+            class="mint-field-core sousuo"
+          />
+        </div>
+        <span class="sousuoGo">搜索</span>
+      </div>
+      <div class="contents_search_no">快来搜一搜聊一聊...</div>
+      <div class="contents" id="contents_search">
+        <div class="logo">
+          <div class="fankiu">
+            <div class="content-food border-bottom">
+              <div class="imgas">
+                <p>
+                  <img class="border" src="" alt="" />
+                </p>
+              </div>
+              <div class="texts">
+                <span class="first"><i>名字</i><a></a></span>
+                <span class="lalst lalst_center">聊聊号：<a>xxxx</a></span>
+                <span class="lalst lalst_name">昵称：<a></a></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="denglu-text">
+          <div class="sheZhi denglu_sheZhi">设置备注</div>
+          <div class="beiZhu"><span>电话号码：</span><font></font></div>
+        </div>
+        <div class="denglu-text ziZhu">
+          <div class="diQu"><span>地区：</span><font>未设置</font></div>
+          <div class="xiangCe"><span>个人相册</span><font></font></div>
+        </div>
+        <div class="denglu-food denglu-food1">
+          <span>发送消息</span>
+        </div>
+        <div class="denglu-food friends" style="display: none">
+          <span>添加好友</span>
+        </div>
+        <div class="tanChuang">
+          <div id="tanChuang_top"></div>
+          <div class="tanChuang_cont">
+            <div class="sheZhi sheZhiFirst">
+              <span>备注名：</span
+              ><input
+                placeholder="请输入备注名"
+                type="text"
+                class="ferst mint-field-core"
+              />
+            </div>
+            <div class="sheZhi sheZhiLste">
+              <span>电话号码：</span
+              ><input
+                placeholder="请输入电话号码"
+                type="number"
+                class="last mint-field-core"
+              />
+            </div>
+          </div>
+          <div class="tanChuang_food tanChuang_first">
+            <span>保&nbsp;&nbsp;存</span>
+          </div>
+          <div class="tanChuang_food tanChuang_last">
+            <span>取&nbsp;&nbsp;消</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="index.js" type="text/javascript" charset="utf-8"></script>
+  <script
+    src="socket.io.dev.js"
+    type="text/javascript"
+    charset="utf-8"
+  ></script>
+  <script src="jquery.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript">
+    var lists = {},
+      socket = io.connect('http://127.0.0.1:8080'),
+      image = {},
+      sexImage = window.localStorage.getItem('sex'),
+      Youimg = null,
+      types = window.localStorage.getItem('type'),
+      toChatName = null,
+      myName = null,
+      addFriend = '',
+      sousuo = null;
+    if (types == 'groupChat') {
+      toChatName = window.localStorage.getItem('toChatName_groupChat');
+      myName = window.localStorage.getItem('name');
+      Youimg = window.localStorage.getItem('headPortrait_groupChat');
+      toNames = window.localStorage.getItem('groupOwner');
+    } else {
+      toChatName = window.localStorage.getItem('toChatName');
+      myName = window.localStorage.getItem('name');
+      Youimg = window.localStorage.getItem('headPortrait');
+      toNames = window.localStorage.getItem('toNames');
+    }
+
+    $('.texts .first i').text(toNames);
+    $('.lalst_name a').text(toNames);
+    $('.fankiu .imgas img')[0].src = Youimg;
+    if (sexImage !== 'Sir') {
+      $('.texts .first a').attr({ class: 'image' });
+    }
+    $('.beiZhu').on('click', function () {
+      window.location.href =
+        'tel:' + window.localStorage.getItem('remarksNuber');
+    });
+    $('.xiangmu-left').on('click', function () {
+      window.location.href = 'liaoTianLieBiao.html';
+    });
+    $('.sousuoGo').on('click', function () {
+      sousuo = $('.sousuo')[0].value;
+      if (sousuo != '') {
+        console.log(sousuo);
+        //资料详情
+        $.ajax({
+          type: 'post',
+          url: 'http://127.0.0.1:8080/remarks1',
+          data: { toChatName: sousuo, myName: myName },
+          success: function (data) {
+            console.log(data);
+            if (data.code === 200) {
+              toChatName = data.name;
+              window.localStorage.removeItem('remarksName');
+              window.localStorage.removeItem('remarksNuber');
+              $('.lalst_center a').text(data.LLNumber);
+              if (data.sex !== 'Sir') {
+                $('.texts .first a').attr({ class: 'image' });
+              } else {
+                $('.texts .first a').attr({ class: '' });
+              }
+              if (data.remarksNameNo == 'no') {
+                $('.texts .first i').text(data.remarksName);
+                $('.lalst_name a').text(data.remarksName);
+                window.localStorage.setItem('toNames', data.remarksName);
+                window.localStorage.setItem('nickName', data.remarksName);
+              } else {
+                $('.texts .first i').text(data.remarksName);
+                $('.lalst_name a').text(data.remarksNameNick);
+                window.localStorage.setItem('toNames', data.remarksName);
+                window.localStorage.setItem('nickName', data.remarksName);
+              }
+              if (data.remarksNuber) {
+                $('.beiZhu').show().children('font').text(data.remarksNuber);
+                window.localStorage.setItem('remarksNuber', data.remarksNuber);
+              } else {
+                $('.beiZhu').hide();
+                window.localStorage.setItem('remarksNuber', '');
+              }
+              if (data.myRegion) {
+                $('.diQu font').text(data.myRegion);
+              } else {
+                $('.diQu font').text('未设置');
+              }
+              if (data.remarksNameNo == 'no') {
+                $('.lalst_name a').text(data.remarksName);
+              }
+              if (data.friend == 'no') {
+                $('.lalst_name a').text(data.remarksName);
+                addFriend = data.remarksName;
+                $('.denglu_sheZhi').hide();
+                $('.friends').show();
+                $('.denglu-food1').hide();
+                $('.xiangmu-rigth').hide();
+              } else {
+                $('.denglu_sheZhi').show();
+                $('.denglu-food1').show();
+                $('.xiangmu-rigth').show();
+                $('.friends').hide();
+              }
+              $('#contents_search').show();
+              $('.contents_search_no').hide();
+              // $('.sousuo')[0].value = '';
+            } else if (data.code === 1001) {
+              //用户不存在请先注册
+              // alert(data.msg);
+              $('#contents_search').hide();
+              $('.contents_search_no').show().text(data.msg);
+              // $('.sousuo')[0].value = '';
+            }
+          },
+          error: function () {
+            console.log('error');
+          },
+        });
+      }
+    });
+
+    //保存
+    $('.tanChuang_first').on('click', function () {
+      var remarksName = $('.ferst')[0].value,
+        remarksNuber = $('.last')[0].value;
+      lists.toChatName = toChatName;
+      lists.remarksName = remarksName;
+      lists.remarksNuber = remarksNuber;
+      lists.myName = myName;
+      if (remarksName == '' && remarksNuber == '') {
+        alert('没有要保存的信息！请填写...');
+        return;
+      }
+      $.ajax({
+        type: 'post',
+        url: 'http://127.0.0.1:8080/remarks',
+        data: lists,
+        success: function (data) {
+          console.log(data);
+          if (data.code === 1001) {
+            //"用户名或密码错误"
+            alert(data.msg);
+          } else if (data.code === 200) {
+            $('.ferst')[0].value = '';
+            $('.last')[0].value = '';
+            $('.tanChuang').hide();
+            $('.home-search span').text('详细资料');
+            if (data.remarksName) {
+              $('.texts .first i').text(data.remarksName);
+              window.localStorage.setItem('toNames', data.remarksName);
+              window.localStorage.setItem('nickName', data.remarksName);
+            }
+            if (data.remarksNuber) {
+              $('.beiZhu').show().children('font').text(data.remarksNuber);
+            }
+            alert(data.msg);
+          } else if (data.code === 2001) {
+            //用户不存在请先注册
+            alert(data.msg);
+          }
+        },
+        error: function () {
+          console.log('error');
+        },
+      });
+    });
+    $('.tanChuang_last').on('click', function () {
+      $('.tanChuang').hide();
+      $('.home-search span').text('详细资料');
+    });
+    $('.denglu_sheZhi').on('click', function () {
+      var gerRemarksName = window.localStorage.getItem('toNames'),
+        getEemarksNuber = window.localStorage.getItem('remarksNuber');
+      $('.tanChuang').show();
+      $('.home-search span').text('添加备注');
+      if (gerRemarksName && gerRemarksName != 'no') {
+        $('.ferst')[0].value = gerRemarksName;
+      }
+      if (getEemarksNuber) {
+        $('.last')[0].value = getEemarksNuber;
+      }
+    });
+    $('.denglu-food1').on('click', function () {
+      window.localStorage.setItem('headPortrait', Youimg);
+      window.localStorage.setItem('type', 'chat');
+      window.localStorage.setItem('toChatName', toChatName);
+      window.location.href = 'liaoTianShi.html';
+    });
+    $('.friends').on('click', function () {
+      console.log('添加好友', addFriend, toChatName);
+      //添加好友；
+      $.ajax({
+        type: 'post',
+        url: 'http://127.0.0.1:8080/post4',
+        data: {
+          addName: addFriend,
+          fromNumber: window.localStorage.getItem('name'),
+          addNumber: toChatName,
+        },
+        success: function (data) {
+          console.log(data);
+          if (data.code == 200) {
+            //向对方发送添加好友验证消息
+            socket.emit('clientmessage', {
+              fromName: window.localStorage.getItem('name'),
+              toName: toChatName,
+              text: { friend: 'no', addName: addFriend },
+            });
+            window.location.href = 'liaoTianLieBiao.html';
+          } else {
+            alert(data.msg);
+          }
+        },
+        error: function () {
+          console.log('error');
+        },
+      });
+    });
+    $(document).on('click', function (e) {
+      //				console.log(e)
+      if (!$(e.target).closest('.xiangmu-rigth,.xiangmu-rigth').length) {
+        $('.home-search ul').hide().removeAttr('class');
+      }
+    });
+    $('.xiangmu-rigth').on('click', function () {
+      if ($('.home-search ul').attr('class')) {
+        $('.home-search ul').hide().removeAttr('class');
+      } else {
+        $('.home-search ul').show().attr({ class: 'show' });
+      }
+    });
+    $('.home-search ul li').on('click', function () {
+      if (this.innerText == '移除好友') {
+        console.log(this.innerText);
+        var list = {
+          removeName: window.localStorage.getItem('toNames'),
+          fromNumber: window.localStorage.getItem('name'),
+          removeNumber: window.localStorage.getItem('toChatName'),
+        };
+        $('.home-search ul').hide().removeAttr('class');
+        //移除好友；
+        $.ajax({
+          type: 'post',
+          url: 'http://127.0.0.1:8080/post4_1',
+          data: list,
+          success: function (data) {
+            console.log(data);
+            if (data.code == 200) {
+              //向对方发送添加好友验证消息
+              //							socket.emit('clientmessage', {
+              //								fromName: window.localStorage.getItem('name'),
+              //								toName: list.addNumber,
+              //								text: {'friend':'no','addName':list.addName}
+              //							})
+              alert(data.msg);
+              window.location.href = 'liaoTianLieBiao.html';
+            } else {
+              alert(data.msg);
+            }
+          },
+          error: function () {
+            console.log('error');
+          },
+        });
+      }
+    });
+  </script>
+</html>

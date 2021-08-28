@@ -1,1 +1,1 @@
-[{"fromName":"18310998371","toName":"18310998371","text":"😁","fromTo":"36621996742","dateTimes":"yes","type":"chat","dateTime":1626263313000}]
+[{"fromName":"18310998371","toName":"18310998371","text":"😝😜","fromTo":"36621996742","dateTimes":"yes","type":"chat","dateTime":1626258037000,"friend":"yes"},{"fromName":"18310998371","toName":"18310998371","text":"😁😄","fromTo":"36621996742","dateTimes":"no","type":"chat","dateTime":1626258069000}]
