@@ -44,10 +44,11 @@
     charset="utf-8"
   ></script>
   <script type="text/javascript">
+    var IP = 'http://192.168.3.18:8080';
     var listName = [],
       page = 1,
       pageSize = 20,
-      socket = io.connect('http://127.0.0.1:8080'),
+      socket = io.connect(IP),
       imgIdLoc = [],
       groupNameLoc = [],
       localName = window.localStorage.getItem('name');
@@ -195,7 +196,7 @@
       // 所有人员列表
       $.ajax({
         type: 'get',
-        url: 'http://127.0.0.1:8080/get2',
+        url: IP + '/get2',
         data: {
           type: 'chat',
           page: page,
@@ -277,7 +278,7 @@
       //添加好友；
       $.ajax({
         type: 'post',
-        url: 'http://127.0.0.1:8080/post4',
+        url: IP + '/post4',
         data: list,
         success: function (data) {
           console.log(data);
@@ -314,7 +315,7 @@
       // 好友人员列表
       $.ajax({
         type: 'get',
-        url: 'http://127.0.0.1:8080/get3',
+        url: IP + '/get3',
         data: { name: localName },
         success: function (data) {
           console.log(data);
@@ -372,7 +373,10 @@
                   if (data.body[i].linkFriends[e].remarksName) {
                     remarksName = data.body[i].linkFriends[e].remarksName;
                   }
-                  if (data.body[i].linkFriends[e].chatRecord.addName) {
+                  if (
+                    data.body[i].linkFriends[e].chatRecord &&
+                    data.body[i].linkFriends[e].chatRecord.addName
+                  ) {
                     chatRecord =
                       '来自' +
                       data.body[i].linkFriends[e].toName +
@@ -411,7 +415,10 @@
                     }
                     //										remarksName = "'"+data.body[i].linkFriends[e].remarksName+"'";
                     if (data.body[i].linkFriends[e].toName == '') {
-                      if (data.body[i].linkFriends[e].chatRecord.addName) {
+                      if (
+                        data.body[i].linkFriends[e].chatRecord &&
+                        data.body[i].linkFriends[e].chatRecord.addName
+                      ) {
                         chatRecord =
                           '您向对方发送了好友验证请求！请耐心等待...';
                       } else {
@@ -424,7 +431,10 @@
                         }
                       }
                     } else {
-                      if (data.body[i].linkFriends[e].chatRecord.addName) {
+                      if (
+                        data.body[i].linkFriends[e].chatRecord &&
+                        data.body[i].linkFriends[e].chatRecord.addName
+                      ) {
                         chatRecord =
                           '来自' +
                           data.body[i].linkFriends[e].toName +
@@ -625,7 +635,7 @@
       if (!show) {
         $.ajax({
           type: 'post',
-          url: 'http://127.0.0.1:8080/post6',
+          url: IP + '/post6',
           data: {
             fromName: friendName,
             myName: localName,
@@ -729,7 +739,7 @@
           // 消息清零
           $.ajax({
             type: 'post',
-            url: 'http://127.0.0.1:8080/post6',
+            url: IP + '/post6',
             data: {
               fromName: localName,
               myName: window.localStorage.getItem('toChatName'),
@@ -858,7 +868,7 @@
         $('#btn').css({ display: 'block' });
         $.ajax({
           type: 'get',
-          url: 'http://127.0.0.1:8080/get',
+          url: IP + '/get',
           data: list,
           success: function (data) {
             console.log(data);

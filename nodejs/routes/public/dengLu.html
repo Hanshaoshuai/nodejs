@@ -64,6 +64,7 @@
   <script src="jquery.js" type="text/javascript" charset="utf-8"></script>
   <script src="index.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript">
+    var IP = 'http://192.168.3.18:8080';
     var lists = {},
       image = {};
     $('.denglu-zhuce').on('click', function () {
@@ -88,7 +89,7 @@
       }
       $.ajax({
         type: 'post',
-        url: 'http://127.0.0.1:8080/post',
+        url: IP + '/post',
         data: lists,
         success: function (data) {
           console.log(data);

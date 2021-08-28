@@ -28,10 +28,11 @@
   ></script>
   <script src="jquery.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript">
+    var IP = 'http://192.168.3.18:8080';
     var listName = [],
       page = 1,
       pageSize = 20,
-      socket = io.connect('http://127.0.0.1:8080');
+      socket = io.connect(IP);
     var local_name = window.localStorage.getItem('name'),
       myIcon = window.localStorage.getItem('myName'),
       imgId = window.localStorage.getItem('imgId'),
@@ -86,7 +87,7 @@
       //添加好友；
       $.ajax({
         type: 'post',
-        url: 'http://127.0.0.1:8080/post4',
+        url: IP + '/post4',
         data: list,
         success: function (data) {
           console.log(data);
@@ -118,7 +119,7 @@
       // 好友人员列表
       $.ajax({
         type: 'get',
-        url: 'http://127.0.0.1:8080/get3',
+        url: IP + '/get3',
         data: { name: local_name, buildingGroup: 'no' },
         success: function (data) {
           console.log(data);
@@ -409,7 +410,7 @@
         //添加成员
         $.ajax({
           type: 'post',
-          url: 'http://127.0.0.1:8080/buildingGroup_add',
+          url: IP + '/buildingGroup_add',
           data: { data: list },
           success: function (data) {
             console.log(data);

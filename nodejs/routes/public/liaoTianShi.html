@@ -90,8 +90,9 @@
   ></script>
   <script src="jquery.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript">
+    var IP = 'http://192.168.3.18:8080';
     var leave = document.getElementById('leaveBtn');
-    var socket = io.connect('http://127.0.0.1:8080'),
+    var socket = io.connect(IP),
       lists = {},
       textName = null,
       textName_1 = null,
@@ -334,7 +335,7 @@
             //转让本群
             $.ajax({
               type: 'post',
-              url: 'http://127.0.0.1:8080/buildingGroup_add',
+              url: IP + '/buildingGroup_add',
               data: { data: list },
               success: function (data) {
                 console.log(data);
@@ -431,7 +432,7 @@
               //退出本群
               $.ajax({
                 type: 'post',
-                url: 'http://127.0.0.1:8080/buildingGroup_add',
+                url: IP + '/buildingGroup_add',
                 data: { data: list },
                 success: function (data) {
                   console.log(data);
@@ -499,7 +500,7 @@
               //移除本群;
               $.ajax({
                 type: 'post',
-                url: 'http://127.0.0.1:8080/buildingGroup_move',
+                url: IP + '/buildingGroup_move',
                 data: { nickName: nickNameTop },
                 success: function (data) {
                   console.log(data);
@@ -867,7 +868,7 @@
           // 消息清零
           $.ajax({
             type: 'post',
-            url: 'http://127.0.0.1:8080/post6',
+            url: IP + '/post6',
             data: {
               fromName: fromName,
               myName: toName_1,
@@ -1060,7 +1061,7 @@
         (this.getList = function getList(types) {
           $.ajax({
             type: 'get',
-            url: 'http://127.0.0.1:8080/get1',
+            url: IP + '/get1',
             data: {
               type: chatType,
               page: page,
@@ -1530,7 +1531,7 @@
               //添加好友；
               $.ajax({
                 type: 'post',
-                url: 'http://127.0.0.1:8080/post4',
+                url: IP + '/post4',
                 data: {
                   addName: nickName,
                   fromNumber: name,
@@ -1562,7 +1563,7 @@
               //添加好友同意请求
               $.ajax({
                 type: 'post',
-                url: 'http://127.0.0.1:8080/post5',
+                url: IP + '/post5',
                 data: { fromName: locFromName, myName: myName, friends: 'yes' },
                 success: function (data) {
                   console.log(data);
@@ -1622,7 +1623,7 @@
             //好友拒绝请求
             $.ajax({
               type: 'post',
-              url: 'http://127.0.0.1:8080/post5',
+              url: IP + '/post5',
               data: { fromName: locFromName, myName: myName, friends: 'no' },
               success: function (data) {
                 console.log(data);

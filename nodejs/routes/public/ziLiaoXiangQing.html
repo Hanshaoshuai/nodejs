@@ -97,8 +97,9 @@
   ></script>
   <script src="jquery.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript">
+    var IP = 'http://192.168.3.18:8080';
     var lists = {},
-      socket = io.connect('http://127.0.0.1:8080'),
+      socket = io.connect(IP),
       image = {},
       nickName = '',
       fromType = window.localStorage.getItem('fromType'),
@@ -147,7 +148,7 @@
     //资料详情
     $.ajax({
       type: 'post',
-      url: 'http://127.0.0.1:8080/remarks1',
+      url: IP + '/remarks1',
       data: { toChatName: toChatName, myName: myName, type: types },
       success: function (data) {
         console.log(data);
@@ -218,7 +219,7 @@
       }
       $.ajax({
         type: 'post',
-        url: 'http://127.0.0.1:8080/remarks',
+        url: IP + '/remarks',
         data: lists,
         success: function (data) {
           console.log(data);
@@ -277,7 +278,7 @@
       //添加好友；
       $.ajax({
         type: 'post',
-        url: 'http://127.0.0.1:8080/post4',
+        url: IP + '/post4',
         data: {
           addName: addFriend,
           fromNumber: myName,
@@ -327,7 +328,7 @@
         //移除好友；
         $.ajax({
           type: 'post',
-          url: 'http://127.0.0.1:8080/post4_1',
+          url: IP + '/post4_1',
           data: list,
           success: function (data) {
             console.log(data);

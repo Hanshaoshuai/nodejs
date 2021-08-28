@@ -96,6 +96,7 @@
   <script src="index.js" type="text/javascript" charset="utf-8"></script>
   <script src="jquery.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript">
+    var IP = 'http://192.168.3.18:8080';
     var lists = {},
       image = {};
     sex = 'Sir';
@@ -126,7 +127,7 @@
       }
       $.ajax({
         type: 'post',
-        url: 'http://127.0.0.1:8080/post1',
+        url: IP + '/post1',
         data: lists,
         success: function (data) {
           console.log(data);
@@ -164,7 +165,7 @@
         $('#btn').css({ display: 'block' });
         $.ajax({
           type: 'get',
-          url: 'http://127.0.0.1:8080/get',
+          url: IP + '/get',
           data: list,
           success: function (data) {
             console.log(data);
@@ -219,7 +220,7 @@
             console.log(formDate);
             $.ajax({
               type: 'POST',
-              url: 'http://127.0.0.1:8080/file_upload',
+              url: IP + '/file_upload',
               data: formDate,
               cache: false,
               processData: false,
